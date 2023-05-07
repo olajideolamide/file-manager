@@ -3,9 +3,9 @@ var LIST_STATUS = 1;
 var LIST_SEARCH = "";
 var LIST_SORT_COLUMN = "";
 var LIST_SORT_DIR = "";
-var FILES = [];
-var FOLDERS = [];
-var ITEMS_MAP = [];
+var FOLDERS = {};
+var ITEMS_MAP = {};
+var ITEMS_COUNT = 0;
 var BREADCRUMB = [];
 var CURRENT_VIEW = "table";
 
@@ -19,8 +19,8 @@ var TABLE_FILTERS = {};
 
 var TABLE_PLACEHOLDER = `
 <tr>
-<td class="text-center"><input type="checkbox" /></td>
-<td ><p class="placeholder-glow">
+<td class="text-center d-none"><input type="checkbox" /></td>
+<td><p class="placeholder-glow">
 <span class="placeholder col-12"></span></p></td><td ><p class="placeholder-glow">
 <span class="placeholder col-12"></span></p></td><td ><p class="placeholder-glow">
 <span class="placeholder col-12"></span></p></td>`;
@@ -135,7 +135,15 @@ $(function () {
 
 
     $('body').on('click', '.create-folder-btn', function (e) {
-        showModal("New Folder", create_folder_modal_content, "Create");
+        showModal("small-modal", "New Folder", getCreateFolderModalContent(), "Create");
+    });
+
+
+
+
+    //bulk options click
+    $('body').on('click', '.bulk-option.move', function (e) {
+        showModal("large-modal", "Move Item(s)", move_modal_content, "Create");
     });
 
 
@@ -272,6 +280,35 @@ function sortCustomTable(column, direction) {
 
 
 
+function refreshItemsMap(data) {
+    ITEMS_MAP = {};
+    ITEMS_COUNT = 0;
+    $.each(data, function (key, item) {
+        ITEMS_MAP[item["id"]] = item;
+
+    })
+
+
+}
+
+function refreshFolders(data) {
+    FOLDERS = {};
+    let this_parent;
+    $.each(data, function (key, item) {
+        FOLDERS[item["id"]] = item;
+
+        //if this folder belongs to this parent and it is not in view, add
+        this_parent = PARENT;
+        if (!this_parent) this_parent = null;
+
+        if (item["parent_id"] == this_parent && !ITEMS_MAP[item["id"]]) {
+            insertItem(0, item);
+        }
+
+    });
+
+
+}
 
 
 var refresh_table = function (data, status_text) {
@@ -283,15 +320,11 @@ var refresh_table = function (data, status_text) {
         return;
     }
 
-    FILES = [];
-    FOLDERS = [];
-    ITEMS_MAP = [];
+    refreshItemsMap(data.data);
+    refreshFolders(data.folders);
 
     clearView();
-
-
     prepareView();
-
 
     $.each(data.data, function (key, item) {
         insertItem(key, item);
@@ -304,11 +337,12 @@ var refresh_table = function (data, status_text) {
 
 function prepareView() {
 
-    if (ITEMS_MAP.length == 0 && PARENT == "" && LIST_SEARCH == "") {
+
+    if (ITEMS_COUNT == 0 && PARENT == "" && LIST_SEARCH == "") {
         $(".drag-drop-container").removeClass("d-none");
         $(".list-view").addClass("d-none");
         $(".grid-view").addClass("d-none");
-    } else if (ITEMS_MAP.length == 0 && LIST_SEARCH != "") {
+    } else if (ITEMS_COUNT == 0 && LIST_SEARCH != "") {
         $(".drag-drop-container").addClass("d-none");
         if (CURRENT_VIEW == "table") {
             $(".list-view").removeClass("d-none");
@@ -320,7 +354,7 @@ function prepareView() {
             $(".grid-view").removeClass("d-none");
 
         }
-    } else if (ITEMS_MAP.length == 0 && LIST_SEARCH == "") {
+    } else if (ITEMS_COUNT == 0 && LIST_SEARCH == "") {
         $(".drag-drop-container").addClass("d-none");
         if (CURRENT_VIEW == "table") {
             $(".list-view").removeClass("d-none");
@@ -345,6 +379,8 @@ function prepareView() {
 
         }
     }
+
+
 }
 
 function clearView() {
@@ -354,12 +390,11 @@ function clearView() {
 
 
 function insertItem(key, item) {
-    if (item["type"] == "FOLDER") FOLDERS[key] = item["id"];
-    else FILES[key] = item["id"];
+    let this_parent = PARENT;
+    if (!this_parent) this_parent = null;
+    if (item["parent_id"] != this_parent) return;
     ITEMS_MAP[item["id"]] = item;
-
-
-
+    ITEMS_COUNT++;
     if (CURRENT_VIEW == "table") generateRow(item);
     else generateGrid(item);
 
@@ -371,8 +406,8 @@ function insertItem(key, item) {
 function generateRow(row) {
     tableLoader("hide");
     var markup = `<tr data-id="` + row["id"] + `">`;
-    markup += `<td class="text-center"><input type="checkbox" /></td>`;
-    markup += `<td class="d-flex"><div class="flex-grow-1"><i class="fa-solid fa-` + row["icon"] + `"></i> ` + truncate(row["name"], 60) + `</div> <div class="px-3"><i class="fa-regular fa-star"></i></div></td> `;
+    markup += `<td class="text-center d-none"><input type="checkbox" /></td>`;
+    markup += `<td class="d-flex ps-3"><div class="flex-grow-1"><i class="fa-solid  pe-3 fa-` + row["icon"] + `"></i> ` + truncate(row["name"], 35) + `</div> <div class="px-3"><i class="fa-regular fa-star"></i></div></td> `;
 
     if (row["type"] == "FOLDER") markup += `<td >` + row["size"] + ` items</td>`;
     else markup += `<td >` + formatBytes(row["size"]) + `</td>`;
@@ -380,7 +415,9 @@ function generateRow(row) {
     markup += `<td >` + row["updated_at"] + `</td>`;
 
     markup += `</tr>`;
-    $('table.custom tbody').append(markup);
+
+    if (row["type"] == "FOLDER") $('table.custom tbody').prepend(markup);
+    else $('table.custom tbody').append(markup);
 
 }
 

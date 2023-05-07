@@ -1,14 +1,15 @@
 let CUSTOM_MODAL;
 
-function showModal(title, body, submit_text) {
+function showModal(type, title, body, submit_text) {
 
-    $(".modal-title").text(title);
-    $(".modal-body .content").html(body);
+    $("#" + type + " .modal-title").text(title);
+    $("#" + type + " .modal-body .content").html(body);
 
     if (submit_text != "") {
-        $(".modal .submit-btn").removeClass("d-none").text(submit_text);
+        $("#" + type + ".modal .submit-btn").removeClass("d-none").text(submit_text);
     }
-    CUSTOM_MODAL = new bootstrap.Modal('#modal', {
+
+    CUSTOM_MODAL = new bootstrap.Modal("#" + type, {
         backdrop: 'static'
     });
     CUSTOM_MODAL.show();
@@ -20,18 +21,28 @@ function closeModal() {
 }
 
 
-$('body').on('click', '.modal .submit-btn', function () {
-    var data = $("#modal-form").serialize();
+$('body').on('click', '#small-modal.modal .submit-btn', function () {
+    var data = $("#small-modal .modal-form").serialize();
     data = getModalFormOptions() + "&" + data;
 
-    request($("#modal-form").attr('action'), data, $("#modal-form").attr('method'), $("#modal-form").attr('callback'));
+    request($("#small-modal .modal-form").attr('action'), data, $("#small-modal .modal-form").attr('method'), $("#small-modal .modal-form").attr('callback'));
 });
 
 
 
+function getCreateFolderModalContent(call_back) {
+    if (!call_back) call_back = "create_folder_callback";
+    return `<form class="modal-form" action="drive/create-folder" method="post" callback="` + call_back + `">
+    <input name="name" type="text" class="form-control form-control-sm" placeholder="Enter a name" required>
+</form>`;
+}
 
 
-let create_folder_modal_content =
-    `<form id="modal-form" action="drive/create-folder" method="post" callback="create_folder_callback">
+
+
+let move_modal_content =
+    `
+    <a class=" text-primary" data-bs-target="#small-modal" data-bs-toggle="modal">Create Folder</a>
+    <form class="modal-form" action="drive/create-folder" method="post" callback="create_folder_callback">
             <input name="name" type="text" class="form-control form-control-sm" placeholder="Enter a name" required>
     </form>`;

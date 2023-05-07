@@ -21,6 +21,9 @@ class DriveAPI extends Admin_Controller
         sleep(1);
         $options = $this->input->post(NULL);
         $result["data"] = $this->DriveModel->getDrive($this->response_data["user"]["id"], $options, true);
+
+        $result["folders"] = $this->DriveModel->getFolders($this->response_data["user"]["id"], true);
+
         echo json_encode($result);
         die;
     }

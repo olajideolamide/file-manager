@@ -1,5 +1,26 @@
-<div class="modal fade" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="small-modal"  data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header p-2 px-3">
+                <div class="modal-title" id="staticBackdropLabel"></div>
+                <button type="button" class="btn-close p-1" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3 content">
+
+                </div>
+
+                <div class="d-flex justify-content-end ">
+                    <button type="button" class="btn btn-sm btn-primary submit-btn">Create</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="large-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header p-2 px-3">
                 <div class="modal-title" id="staticBackdropLabel"></div>

@@ -47,7 +47,12 @@ class Drive extends Admin_Controller
 
         $folder_data = $this->DriveModel->getFile($id, TRUE);
 
-        echo json_encode(array("status" => "complete", "data" => $folder_data));
+        $response = array("status" => "complete", "data" => $folder_data);
+
+        $response["folders"] = $this->DriveModel->getFolders($this->response_data["user"]["id"], true);
+
+        echo json_encode($response);
+        die;
     }
 
     public function upload()
@@ -57,7 +62,7 @@ class Drive extends Admin_Controller
         $adapter = new LocalFilesystemAdapter(APPPATH . "/../storage");
         $filesystem = new Filesystem($adapter);
 
-        sleep(1);
+
 
         $stream = fopen($_FILES['file']['tmp_name'], 'r+');
 
@@ -72,21 +77,13 @@ class Drive extends Admin_Controller
 
             //first find out if this file contains a folder
             $path_array = explode("/", $this->input->post('name'));
+
             $parent = $this->input->post('parent');
 
-            if (count($path_array) > 1) {
-                //we have a folder named
-                //grab the folder and create it.
-
-                $file_data = array();
-                $file_data["name"] = $path_array[count($path_array) - 2];
-                $file_data["type"] = "FOLDER";
-                $file_data["created_at"] = date("Y-m-d H:i:s");
-                $file_data["updated_at"] = date("Y-m-d H:i:s");
-                $file_data["user_id"] =  $this->response_data["user"]["id"];
-                if (!empty($this->input->post('parent'))) $file_data["parent_id"] =  $this->input->post('parent');
-
-                $parent = $this->DriveModel->createFolder($file_data);
+            if (count($path_array) >= 2) {
+                //this is a path,
+                //get the real parent of this file
+                $parent = $this->DriveModel->getRealParent($this->input->post('name'), $parent, $this->input->post('queue_id'));
             }
 
             $file_data = array();
@@ -103,11 +100,15 @@ class Drive extends Admin_Controller
             $id = $this->DriveModel->create($file_data);
 
             $file_data = $this->DriveModel->getFile($id, TRUE);
-            $file_data[0]["full_path"] = $this->input->post('name');
 
-            echo json_encode(array("status" => "complete", "id" => $this->input->post("local_id"), "data" => $file_data));
+            $folders = $this->DriveModel->getFolders($this->response_data["user"]["id"], true);
+
+            $response = array("status" => "complete", "id" => $this->input->post("local_id"), "data" => $file_data, "folders" => $folders);
+            echo json_encode($response);
+            die;
         } catch (FilesystemException | UnableToWriteFile $exception) {
             echo json_encode(array("status" => "failed", "id" => $this->input->post("local_id")));
+            die;
         }
 
 

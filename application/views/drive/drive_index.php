@@ -42,30 +42,26 @@
 
     <div class="bg-light mb-3 py-1">
 
-        <button type="button" class="option btn btn-link btn-sm text-secondary text-decoration-none border-0 hover-dark" disabled>
-            <span data-feather="copy" class="align-text-bottom"></span> Copy
-        </button>
-
-        <button type="button" class="option btn btn-link btn-sm text-secondary text-decoration-none border-0 hover-dark" disabled>
+        <button type="button" class="option bulk-option move btn btn-link btn-sm text-secondary text-decoration-none border-0 hover-dark" disabled>
             <span data-feather="move" class="align-text-bottom"></span> Move
         </button>
 
 
-        <button type="button" class="option btn btn-link btn-sm text-secondary text-decoration-none border-0 hover-dark" disabled>
+        <button type="button" class="option bulk-option download btn btn-link btn-sm text-secondary text-decoration-none border-0 hover-dark" disabled>
             <span data-feather="download" class="align-text-bottom"></span> Download
         </button>
 
 
 
-        <button type="button" class="option btn btn-link btn-sm text-secondary text-decoration-none border-0 hover-dark" disabled>
+        <button type="button" class="option bulk-option share btn btn-link btn-sm text-secondary text-decoration-none border-0 hover-dark" disabled>
             <span data-feather="share-2" class="align-text-bottom"></span> Share
         </button>
 
-        <button type="button" class="option btn btn-link btn-sm text-secondary text-decoration-none border-0 hover-dark" disabled>
+        <button type="button" class="option bulk-option star btn btn-link btn-sm text-secondary text-decoration-none border-0 hover-dark" disabled>
             <span data-feather="star" class="align-text-bottom"></span> Star
         </button>
 
-        <button type="button" class="option btn btn-link btn-sm text-secondary text-decoration-none border-0 hover-dark" disabled>
+        <button type="button" class="option bulk-option trash btn btn-link btn-sm text-secondary text-decoration-none border-0 hover-dark" disabled>
             <span data-feather="trash-2" class="align-text-bottom"></span> Trash
         </button>
     </div>
@@ -90,8 +86,8 @@
                         <table class="table table-sm custom mb-0 py-3">
                             <thead>
                                 <tr>
-                                    <th class="text-center" scope="col" width="30" style="max-width: 30px"><input class="check-all" type="checkbox" /></th>
-                                    <th class="sortable" scope="col" data-name="name" width="400" style="min-width: 70%">Name</th>
+                                    <th class="text-center d-none" scope="col" width="30" style="max-width: 30px"><input class="check-all" type="checkbox" /></th>
+                                    <th class="sortable ps-3" scope="col" data-name="name">Name</th>
                                     <th class="sortable" scope="col" data-name="size" width="100" style="min-width: 100px">Size</th>
                                     <th class="sortable" scope="col" data-name="updated_at">Last Modified</th>
 
@@ -262,7 +258,7 @@
     </div>
     </main>
 
-    <!--<div class="col-md-4 col-lg-3 d-md-block p-3" style="box-shadow: inset 1px 0 0 rgba(0, 0, 0, .1);">
+    <div class="col-md-3 d-md-block p-3" style="box-shadow: inset 1px 0 0 rgba(0, 0, 0, .1);">
 
 
         <div class="modal-body p-1">
@@ -301,7 +297,7 @@
                 thanks!</button>
         </div>
 
-    </div>-->
+    </div>
 
 </div>
 
@@ -327,4 +323,48 @@
 </div>
 
 <input id="file-input" class="d-none" type="file" name="name[]" multiple />
-<input id="folder-input" type="file" webkitdirectory mozdirectory />
+<input id="folder-input" class="d-none" type="file" webkitdirectory mozdirectory />
+
+
+
+
+
+<div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Modal 1</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Show a second modal and hide this one with the button below.
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">Open second modal</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Modal 2</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Hide this modal and show the first with the button below.
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-bs-target="#exampleModalToggle" data-bs-toggle="modal">Back to first</button>
+      </div>
+    </div>
+  </div>
+</div>
+<button class="btn btn-primary" data-bs-target="#exampleModalToggle" data-bs-toggle="modal">Open first modal</button>
+
+
+
+
+
+

@@ -38,8 +38,6 @@ function getParent(full_path, level) {
         //this includes a folder
         this_parent = QUEUE_FOLDER_KEYS[relative_path];
 
-        //console.log(relative_path);
-        //console.log(this_parent);
     }
 
     return this_parent;
@@ -59,64 +57,30 @@ $('#file-input, #folder-input').on('change', function () {
     let relative_path;
     let file_parent;
     let file_name;
+    let queue_id = randomString(10);
 
     for (let i = 0; i < files.length; i++) {
 
         file_parent = "";
-        if (!PARENT) file_parent = PARENT;
+        if (PARENT) file_parent = PARENT;
 
         file = files.item(i);
-        console.log(file); continue;
+
+
         file_name = file.webkitRelativePath;
         if (!file_name) file_name = file.name;
-        path_array = file_name.split("/");
-
-        relative_path = getRelativePath(path_array, 1);
-
-
-        if (queue_parent) {
-            full_path = queue_parent + file_name;
-            relative_path = queue_parent + relative_path;
-        } else full_path = file_name;
-
-        if (path_array.length > 1) {
-            //this includes a folder
-            //does the full path exists in the queue folder keys?
-
-            file_parent = QUEUE_FOLDER_KEYS[relative_path];
-
-            //console.log(relative_path);
-            //console.log(QUEUE_FOLDER_KEYS);
-            //console.log(file_parent);
-
-
-            if (!file_parent) {
-                //this full path is not in the queue folder keys
-                //we hope that a step above it is tho
-                relative_path = getRelativePath(path_array, 1);
-                if (queue_parent) relative_path = queue_parent + relative_path;
-                file_parent = QUEUE_FOLDER_KEYS[relative_path];
-                console.log(relative_path);
-                console.log(file_parent);
-            } else {
-                full_path = file.name;
-            }
-        }
-
-        if (!file_parent) file_parent = "";
-
 
         let local_id = randomString(20);
         let this_file = {
             id: local_id,
-            name: file.name,
-            full_path: full_path,
+            name: file_name,
             size: file.size,
             mime: file.type,
             status: "waiting",
             resource: file,
             type: "file",
-            parent: file_parent
+            parent: file_parent,
+            queue_id: queue_id
         };
 
 
@@ -221,21 +185,6 @@ function updateJobView(id, status) {
 
 function upload(job) {
 
-    if (!job.parent) {
-        let parent = getParent(job.full_path, 1);
-
-        if (!parent) {
-            job.name = job.full_path;
-            parent = getParent(job.full_path, 2);
-            if(parent){
-                job.parent = parent; //the grand parent
-            }
-        } else {
-            job.parent = parent;
-        }
-    }
-
-
     var form_data = new FormData();
     form_data.append('file', job.resource);
     form_data.append('local_id', job.id);
@@ -244,6 +193,7 @@ function upload(job) {
     form_data.append('mime', job.mime);
     form_data.append('type', job.type);
     form_data.append('parent', job.parent);
+    form_data.append('queue_id', job.queue_id);
 
     QUEUE_CURRENT = job.id;
 
@@ -272,9 +222,10 @@ function upload(job) {
             if (response.status == "complete") {
 
                 $.each(response.data, function (key, item) {
-                    registerQueueFolderKey(item["full_path"], item["parent_id"])
-                    insertItem(key, item)
+                    insertItem(key, item);
                 });
+
+                refreshFolders(response.folders);
 
                 updateJobStatus(response.id, "complete");
 
@@ -295,16 +246,6 @@ function upload(job) {
     });
 }
 
-function registerQueueFolderKey(full_path, id) {
-    let relative_path = getRelativePath(full_path.split("/"), 1);
-
-    if (relative_path && !QUEUE_FOLDER_KEYS[relative_path]) QUEUE_FOLDER_KEYS[relative_path] = id;
-
-    //console.log(QUEUE_FOLDER_KEYS);
-
-
-}
-
 
 
 
@@ -318,4 +259,5 @@ var create_folder_callback = function (data, status_text) {
         insertItem(key, item);
     });
     closeModal();
+    refreshFolders(data.folders);
 }
