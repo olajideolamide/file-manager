@@ -20,12 +20,12 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 application/logs/*
 !application/logs/index.html
 !application/logs/.htaccess
-photos/
 local/
 LANDING/
 tools/
 storage/
-delete/
-SEO/
+writable/
+tests/
+public/delete
 robots.txt
 
