@@ -1,13 +1,17 @@
 var PARENT = "";
 var LIST_STATUS = 1;
-var LIST_SEARCH = "";
-var LIST_SORT_COLUMN = "";
-var LIST_SORT_DIR = "";
+var SEARCH_TERM = "";
+var SORT_COLUMN = "";
+var SORT_DIR = "";
 var FOLDERS = {};
-var ITEMS_MAP = {};
+var FILE_MAP = {};
 var ITEMS_COUNT = 0;
 var BREADCRUMB = [];
 var CURRENT_VIEW = "table";
+
+
+
+
 
 BREADCRUMB[0] = {
     id: "",
@@ -17,22 +21,12 @@ BREADCRUMB[0] = {
 
 var TABLE_FILTERS = {};
 
-var TABLE_PLACEHOLDER = `
-<tr>
-<td class="text-center d-none"><input type="checkbox" /></td>
-<td><p class="placeholder-glow">
-<span class="placeholder col-12"></span></p></td><td ><p class="placeholder-glow">
-<span class="placeholder col-12"></span></p></td><td ><p class="placeholder-glow">
-<span class="placeholder col-12"></span></p></td>`;
-
-
-
 
 /**
  * refetches the table data from the server
  */
 function refetchData() {
-    tableLoader("show");
+
     var data = getOptions();
     request(table_src_url, data, "get", "refresh_table");
 }
@@ -46,43 +40,29 @@ $(function () {
 
 
 
-function tableLoader(action) {
-    if (action == "show") {
-        $('table.custom tbody').empty();
-        for (let i = 0; i < 1; i++) {
-            $('table.custom tbody').append(TABLE_PLACEHOLDER);
-        }
-
-        $(".table-container .loader").css("height", "100%");
-    } else {
-        $(".table-container .loader").css("height", "0%");
-    }
-
-}
-
 //table options
 function getOptions() {
 
     return {
         "filter": JSON.stringify(TABLE_FILTERS),
-        "search": LIST_SEARCH,
-        "sort": LIST_SORT_COLUMN,
-        "dir": LIST_SORT_DIR,
-        "parent": PARENT
+        "search": app.search_term,
+        "sort": app.sort_column,
+        "dir": app.sort_dir,
+        "parent": app.parent
     };
 }
 
 
 function clearOptions() {
-    LIST_SEARCH = "";
-    LIST_SORT_COLUMN = "";
-    LIST_SORT_DIR = "";
+    app.search_term = "";
+    app.sort_column = "";
+    app.sort_dir = "";
     $(".search.form-control").val("");
 
 }
 
 function populateModalFormOptions(data) {
-    data["parent"] = PARENT;
+    data["parent"] = app.parent;
     return data;
 }
 
@@ -93,7 +73,7 @@ $(function () {
 
     $('body').on('click', 'table.custom tbody tr', function (e) {
 
-        //
+
         if ($(e.target).closest('input[type="checkbox"]').length > 0) {
 
         } else {
@@ -111,7 +91,7 @@ $(function () {
     //double click a folder in the table view
     $('body').on('dblclick', 'table.custom tbody tr', function (e) {
 
-        var item = ITEMS_MAP[$(this).data("id")];
+        var item = app.file_folder_map[$(this).data("id")];
 
         if (item["type"] == "FOLDER") {
             incrementBreadcrumb({
@@ -151,7 +131,7 @@ $(function () {
 })
 
 function updateParent(parent) {
-    PARENT = parent;
+    app.parent = parent;
     refetchData();
 }
 
@@ -257,53 +237,29 @@ $(function () {
 
 
 
-//search filter
-$(function () {
-
-    $(".search").keyup(function (e) {
-
-        LIST_SEARCH = $(this).val();
-        refetchData();
-    });
-
-})
 
 
 //column sort
 function sortCustomTable(column, direction) {
-
-
-    LIST_SORT_COLUMN = column;
-    LIST_SORT_DIR = direction;
+    app.sort_column = column;
+    app.sort_dir = direction;
 
     refetchData();
 }
 
 
-
-function refreshItemsMap(data) {
-    ITEMS_MAP = {};
-    ITEMS_COUNT = 0;
-    $.each(data, function (key, item) {
-        ITEMS_MAP[item["id"]] = item;
-
-    })
-
-
-}
-
 function refreshFolders(data) {
-    FOLDERS = {};
+    app.folders = {};
     let this_parent;
     $.each(data, function (key, item) {
-        FOLDERS[item["id"]] = item;
+        app.folders[item["id"]] = item;
 
         //if this folder belongs to this parent and it is not in view, add
-        this_parent = PARENT;
+        this_parent = app.parent;
         if (!this_parent) this_parent = null;
 
-        if (item["parent_id"] == this_parent && !ITEMS_MAP[item["id"]]) {
-            insertItem(0, item);
+        if (item["parent_id"] == this_parent && !app.file_folder_map[item["id"]]) {
+            insertFileFolder(0, item);
         }
 
     });
@@ -317,121 +273,28 @@ var refresh_table = function (data, status_text) {
 
     if (status_text) {
         //we show error
-        tableLoader("hide");
         return;
     }
 
-    refreshItemsMap(data.data);
-    refreshFolders(data.folders);
-
-    clearView();
-    prepareView();
-
     $.each(data.data, function (key, item) {
-        insertItem(key, item);
+        insertFileFolder(key, item);
     });
-
-
-
 
 };
 
-function prepareView() {
 
 
-    if (ITEMS_COUNT == 0 && PARENT == "" && LIST_SEARCH == "") {
-        $(".drag-drop-container").removeClass("d-none");
-        $(".list-view").addClass("d-none");
-        $(".grid-view").addClass("d-none");
-    } else if (ITEMS_COUNT == 0 && LIST_SEARCH != "") {
-        $(".drag-drop-container").addClass("d-none");
-        if (CURRENT_VIEW == "table") {
-            $(".list-view").removeClass("d-none");
-            $(".grid-view").addClass("d-none");
-            $('table.custom tbody').append(generateEmptyRow("No result was found for your query"));
-
-        } else {
-            $(".list-view").addClass("d-none");
-            $(".grid-view").removeClass("d-none");
-
-        }
-    } else if (ITEMS_COUNT == 0 && LIST_SEARCH == "") {
-        $(".drag-drop-container").addClass("d-none");
-        if (CURRENT_VIEW == "table") {
-            $(".list-view").removeClass("d-none");
-            $(".grid-view").addClass("d-none");
-            $('table.custom tbody').append(generateEmptyRow("This folder is empty"));
-
-        } else {
-            $(".list-view").addClass("d-none");
-            $(".grid-view").removeClass("d-none");
-
-        }
-
-    } else {
-        $(".drag-drop-container").addClass("d-none");
-        if (CURRENT_VIEW == "table") {
-            $(".list-view").removeClass("d-none");
-            $(".grid-view").addClass("d-none");
-            $('table.custom tbody .empty').remove();
-        } else {
-            $(".list-view").addClass("d-none");
-            $(".grid-view").removeClass("d-none");
-
-        }
-    }
 
 
-}
 
-function clearView() {
-    if (CURRENT_VIEW == "table") $('table.custom tbody').empty();
-    else $('.grid-view').empty();
-}
-
-
-function insertItem(key, item) {
-    let this_parent = PARENT;
+function insertFileFolder(key, item) {
+    let this_parent = app.parent;
     if (!this_parent) this_parent = null;
     if (item["parent_id"] != this_parent) return;
-    ITEMS_MAP[item["id"]] = item;
-    ITEMS_COUNT++;
-    if (CURRENT_VIEW == "table") generateRow(item);
-    else generateGrid(item);
-
-    prepareView();
-}
-
-
-
-function generateRow(row) {
-    tableLoader("hide");
-    var markup = `<tr data-id="` + row["id"] + `">`;
-    markup += `<td class="text-center d-none"><input type="checkbox" /></td>`;
-    markup += `<td class="d-flex ps-3"><div class="flex-grow-1"><i class="fa-solid  pe-3 fa-` + row["icon"] + `"></i> ` + truncate(row["name"], 35) + `</div> <div class="px-3"><i class="fa-regular fa-star"></i></div></td> `;
-
-    if (row["type"] == "FOLDER") markup += `<td >` + row["size"] + ` items</td>`;
-    else markup += `<td >` + formatBytes(row["size"]) + `</td>`;
-
-    markup += `<td >` + row["updated_at"] + `</td>`;
-
-    markup += `</tr>`;
-
-    if (row["type"] == "FOLDER") $('table.custom tbody').prepend(markup);
-    else $('table.custom tbody').append(markup);
+    app.files.push(item);
 
 }
 
-function generateGrid(grid) {
-
-}
-
-function generateEmptyRow(message) {
-
-    var markup = `<tr class="empty"><td class="text-center" colspan="4">` + message + `</td></tr>`;
-
-    return markup;
-}
 
 
 $(function () {

@@ -1,3 +1,6 @@
+</div> <!-- row -->
+</div> <!-- app -->
+
 <div class="modal fade" id="small-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -41,6 +44,69 @@
 </div>
 
 
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="queue-toast" class="toast fase" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+
+            <strong class="me-auto">Uploaded 5 files</strong>
+
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body p-0 ps-3 pt-2">
+            <div class="list-group download-queue">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<input id="file-input" class="d-none" type="file" name="name[]" multiple />
+<input id="folder-input" class="d-none" type="file" webkitdirectory mozdirectory />
+
+
+
+
+
+<div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Modal 1</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Show a second modal and hide this one with the button below.
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">Open second modal</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Modal 2</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Hide this modal and show the first with the button below.
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-bs-target="#exampleModalToggle" data-bs-toggle="modal">Back to first</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<button class="btn btn-primary" data-bs-target="#exampleModalToggle" data-bs-toggle="modal">Open first modal</button>-->
+
+
+
+
 
 
 <script src="/assets/dist/js/bootstrap.bundle.min.js"></script>
@@ -63,5 +129,6 @@
 <script src="/assets/custom/js/table.js"></script>
 <script src="/assets/custom/js/queue.js"></script>
 </body>
+
 
 </html>

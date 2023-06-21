@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use \Config\MimesIcons;
+use \Config\FileTypes;
 
 class DriveModel
 {
@@ -33,7 +34,7 @@ class DriveModel
     public function getFile($id, $prepare = false)
     {
 
-        $sql = "SELECT file.*, user.first_name FROM file LEFT JOIN user ON file.user_id = user.id WHERE file.id = ?";
+        $sql = "SELECT file.*, user.first_name, p_file.name as parent_name FROM file LEFT JOIN user ON file.user_id = user.id LEFT JOIN file as p_file ON p_file.id = file.parent_id WHERE file.id = ?";
 
         $query = $this->db->query($sql, array($id));
 
@@ -56,7 +57,7 @@ class DriveModel
     {
 
 
-        $sql = "SELECT file.*, user.first_name FROM file LEFT JOIN user ON file.user_id = user.id WHERE file.name = ? ";
+        $sql = "SELECT file.*, user.first_name, p_file.name as parent_name FROM file LEFT JOIN user ON file.user_id = user.id LEFT JOIN file as p_file ON p_file.id = file.parent_id WHERE file.name = ? ";
 
         $options = array();
         $options[] = $name;
@@ -91,7 +92,7 @@ class DriveModel
 
         $query_filters[] = $user_id;
 
-        $sql = "SELECT file.*, user.first_name FROM file LEFT JOIN user ON file.user_id = user.id WHERE file.user_id = ?";
+        $sql = "SELECT file.*, user.first_name, p_file.name as parent_name FROM file LEFT JOIN user ON file.user_id = user.id LEFT JOIN file as p_file ON p_file.id = file.parent_id WHERE file.user_id = ?";
 
         if (!empty($search)) {
             $sql .= " AND name LIKE '%" . $search . "%'";
@@ -100,10 +101,10 @@ class DriveModel
 
         if (empty($search)) {
             if (!empty($parent)) {
-                $sql .= " AND parent_id = ?";
+                $sql .= " AND file.parent_id = ?";
                 $query_filters[] = $parent;
             } else {
-                $sql .= " AND parent_id IS NULL";
+                $sql .= " AND file.parent_id IS NULL";
             }
         }
 
@@ -123,23 +124,35 @@ class DriveModel
 
     public function prepareDriveData($data)
     {
+
         $response = array();
         foreach ($data as $i => $row) {
             $icon = MimesIcons::guessIconFromExtension((string) $row["extension"]);
+
 
             if (empty($icon)) $icon = "file";
             if ($row["type"] == "FOLDER") $icon = "folder";
 
             $response[$i]["id"] = $row["id"];
             $response[$i]["name"] = $row["name"];
-            $response[$i]["icon"] = $icon;
+            $response[$i]["icon"] = "fa-" . $icon;
             $response[$i]["size"] = $row["size"];
             $response[$i]["type"] = $row["type"];
+            $response[$i]["file_type"] = FileTypes::guessFileTypeFromExtension((string) $row["extension"]);
+
+            if ($response[$i]["file_type"] == "photo") {
+                //TODO use the app url
+                $response[$i]["thumb_url"] = "/api/photo/thumb/" . $row["id"];
+            }
+
+            $response[$i]["extension"] = $row["extension"];
             if ($row["type"] == "FOLDER") $response[$i]["size"] = "11";
             $response[$i]["mime"] = $row["mime"];
             $response[$i]["owner"] = $row["first_name"];
             $response[$i]["parent_id"] = $row["parent_id"];
+            $response[$i]["parent_name"] = $row["parent_name"] ? $row["parent_name"] : "Home";
             $response[$i]["updated_at"] = date("jS M Y", strtotime($row["updated_at"]));
+            $response[$i]["created_at"] = date("jS M Y", strtotime($row["created_at"]));
         }
 
         return $response;

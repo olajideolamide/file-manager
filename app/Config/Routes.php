@@ -53,6 +53,9 @@ $routes->group('api', static function ($routes) {
     $routes->match(['get'], 'drive/file-entries', 'API\Drive::fileEntries');
     $routes->match(['post'], 'drive/upload', 'API\Drive::upload');
     $routes->match(['post'], 'drive/folder', 'API\Drive::createFolder');
+
+    $routes->match(['get'], 'photo/thumb/(:num)', 'API\Photo::thumb/$1');
+    $routes->match(['get'], 'photo/resize/(:segment)/(:num)', 'API\Photo::resize/$1/$2');
 });
 
 

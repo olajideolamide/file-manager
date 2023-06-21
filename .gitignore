@@ -16,7 +16,7 @@ user_guide_src/cilexer/build/*
 user_guide_src/cilexer/dist/*
 user_guide_src/cilexer/pycilexer.egg-info/*
 
-#codeigniter 3
+#codeigniter 4
 application/logs/*
 !application/logs/index.html
 !application/logs/.htaccess

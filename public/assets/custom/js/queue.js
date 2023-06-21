@@ -29,7 +29,7 @@ function getRelativePath(path_array, pop_count) {
 }
 
 function getParent(full_path, level) {
-    let this_parent = PARENT;
+    let this_parent = app.parent;
 
     let path_array = full_path.split("/");
     let relative_path = getRelativePath(path_array, level);
@@ -46,7 +46,7 @@ function getParent(full_path, level) {
 
 $('#file-input, #folder-input').on('change', function () {
 
-    let queue_parent = PARENT;
+    let queue_parent = app.parent;
     let html = "";
 
     const files = this.files;
@@ -62,7 +62,7 @@ $('#file-input, #folder-input').on('change', function () {
     for (let i = 0; i < files.length; i++) {
 
         file_parent = "";
-        if (PARENT) file_parent = PARENT;
+        if (app.parent) file_parent = app.parent;
 
         file = files.item(i);
 
@@ -223,7 +223,7 @@ function upload(job) {
             if (response.status == "complete") {
 
                 $.each(response.data, function (key, item) {
-                    insertItem(key, item);
+                    insertFileFolder(key, item);
                 });
 
                 refreshFolders(response.folders);
@@ -257,7 +257,7 @@ var create_folder_callback = function (data, status_text) {
 
     //insert the folder into the tree
     $.each(data.data, function (key, item) {
-        insertItem(key, item);
+        insertFileFolder(key, item);
     });
     closeModal();
     refreshFolders(data.folders);

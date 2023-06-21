@@ -4,6 +4,98 @@ $(".dropdown-menu label").click(function (e) {
     e.stopPropagation(); // if you click on the div itself it will cancel the click event.
 });
 
+Vue.filter('truncate', function (fullStr, strLen, separator) {
+    if (!fullStr) return '';
+
+    if (fullStr.length <= strLen) return fullStr;
+
+    separator = separator || '...';
+
+    var sepLen = separator.length,
+        charsToShow = strLen - sepLen,
+        frontChars = Math.ceil(charsToShow / 2),
+        backChars = Math.floor(charsToShow / 2);
+
+    return fullStr.substr(0, frontChars) +
+        separator +
+        fullStr.substr(fullStr.length - backChars);
+})
+
+
+var app = new Vue({
+    el: '#apps',
+    data: {
+        parent: "",
+        search_term: "",
+        sort_column: "",
+        sort_dir: "",
+        show_list: "true",
+        folders: {},
+        files: [],
+        main_pane_active_class: 'col-lg-10',
+        info_pane_active_class: '',
+        info_pane_data: {
+            title: "",
+
+        },
+        current_info_item: ""
+
+    },
+    computed: {
+        file_folder_map: {
+            // getter
+            get: function () {
+                return this.files.reduce((accumulator, item) => {
+                    return {
+                        ...accumulator,
+                        [item.id]: item
+                    };
+                }, {});
+            }
+        },
+        current_info_item_object: {
+            get: function () {
+                if (!this.current_info_item) return {};
+                console.log(this.file_folder_map[this.current_info_item]);
+                return this.file_folder_map[this.current_info_item];
+            }
+        }
+    },
+    methods: {
+        truncateThis: function (str, n) {
+            return (str.length > n) ? str.slice(0, n - 1) + "..." : str;
+        },
+        formatBytes(bytes, decimals = 1) {
+            if (!+bytes) return '0 Bytes'
+
+            const k = 1024
+            const dm = decimals < 0 ? 0 : decimals
+            const sizes = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+
+            const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+            return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+        },
+        showInfoPane() {
+            this.main_pane_active_class = 'col-lg-7';
+            this.info_pane_active_class = 'd-lg-block';
+        },
+        hideInfoPane() {
+            this.main_pane_active_class = 'col-lg-10';
+            this.info_pane_active_class = '';
+        },
+        populateInfoPane(event) {
+            this.current_info_item = event.target.dataset.fileId;
+            //this.info_pane_data.title = this.file_folder_map[event.target.dataset.fileId].name;
+            this.showInfoPane();
+        }
+
+    }
+})
+
+
+
+
 
 
 
@@ -11,12 +103,8 @@ $(".dropdown-menu label").click(function (e) {
 function request(path, data, method, call_back) {
 
     if (method != "get") {
-        //data[csrf_token_name] = csrf_hash;
+        data[csrf_token_name] = csrf_hash;
     }
-
-    data[csrf_token_name] = csrf_hash;
-
-    console.log(data);
 
     var request = $.ajax({
         url: path,

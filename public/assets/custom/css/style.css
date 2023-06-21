@@ -10,8 +10,29 @@ body {
   /* Standard syntax */
 }
 
-ul{
+.accordion-button {
+  font-size: .875rem;
+  color: #6c757d;
+}
+
+.accordion-body {
+  color: #6c757d;
+}
+
+.bg-lighter{
+  background-color: #ececec
+}
+
+.fs-7{
+  font-size: 0.8rem !important;
+}
+
+ul {
   margin: 0px;
+}
+
+.pointer{
+  cursor: pointer;
 }
 
 .bd-placeholder-img {
@@ -45,6 +66,14 @@ ul{
 .bi {
   vertical-align: -.125em;
   fill: currentColor;
+}
+
+.w-one-third{
+  width: 33.3333%;
+}
+
+.w-two-third{
+  width: 64.6666%;
 }
 
 .nav-scroller {
@@ -262,11 +291,25 @@ fieldset:disabled .btn {
 .grid-view .card .img-container {
   display: flex;
   justify-content: center;
-  height: 161px;
   text-align: center;
   align-items: center;
 }
 
 .hover-dark:hover {
   color: black !important;
+}
+
+#info-pane {
+  border-left: solid 1px #ccc;
+}
+
+.avatar{
+  width: 30px;
+  height: 30px
+}
+
+@media (min-width: 991.98px) {
+  #main-pane.col-lg-10 {
+    width: 83.3%;
+  }
 }
