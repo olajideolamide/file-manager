@@ -135,7 +135,7 @@
 
             <div class="main-content">
                 <div class="mx-3">
-                    <div class="drag-drop-container border border-3 mb-3 rounded d-none">
+                    <div v-if="files.length == 0" class="drag-drop-container border border-3 mb-3 rounded">
                         <img src="/assets/custom/images/add_files.svg" height="150" />
                         <div class="mt-3">
                             <h4>Drop files and folders here</h4>
@@ -143,113 +143,116 @@
                         </div>
 
                     </div>
-                    <div class="rounded list-view" v-if="show_list == 'true'">
-                        <div class="card border-0" style="background-color:transparent">
-                            <div class="card-body p-0">
-                                <div class="table-container">
-                                    <div class="loader"></div>
-                                    <table class="table table-sm custom mb-0 py-3">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center align-middle" scope="col" width="30" style="max-width: 30px">
 
-                                                    <div>
-                                                        <input class="form-check-input check-all" type="checkbox" v-model="all_selected">
-                                                    </div>
+                    <div v-else class="list_grid">
+                        <div class="rounded list-view" v-if="show_list == 'true'">
+                            <div class="card border-0" style="background-color:transparent">
+                                <div class="card-body p-0">
+                                    <div class="table-container">
+                                        <div class="loader"></div>
+                                        <table class="table table-sm custom mb-0 py-3">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center align-middle" scope="col" width="30" style="max-width: 30px">
 
-
-                                                <th class="sortable ps-3" scope="col" data-name="name">Name</th>
-                                                <th class="sortable d-none d-md-table-cell" scope="col" data-name="size" width="100" style="min-width: 100px">Size</th>
-                                                <th class="sortable d-none d-md-table-cell" scope="col" data-name="updated_at">Last Modified</th>
-                                                <th class="d-lg-none" scope="col" width="30"></th>
-
-
-
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="(file, index) of file_folder_map" :key="file.id" v-bind:data-id="file.id">
-                                                <td class="text-center align-middle">
-                                                    <div>
-                                                        <input class="form-check-input" type="checkbox" v-model="selected" :value="file.id">
-                                                    </div>
-                                                </td>
-                                                <td class="d-flex ps-3">
-                                                    <div v-bind:data-file-id="file.id" v-on:click="populateInfoPane" class="d-flex align-items-center flex-grow-1">
-                                                        <img v-if="file.file_type == 'photo'" v-bind:src="file.thumb_url" width="30" height="30" class="me-3" v-bind:data-file-id="file.id" />
-                                                        <i v-else v-bind:class="[ file.icon, 'fa-solid', 'pe-3', 'fa-2x' ]" v-bind:data-file-id="file.id"></i>
-
-                                                        <div class="file-name text-truncate" v-bind:data-file-id="file.id">
-                                                            {{ file.name }}
+                                                        <div>
+                                                            <input class="form-check-input check-all" type="checkbox" v-model="all_selected">
                                                         </div>
-                                                    </div>
-                                                    <div class="px-3 d-none d-md-block">
-                                                        <i class="fa-regular fa-star"></i>
-                                                    </div>
-                                                </td>
-                                                <td class="d-none d-md-table-cell" v-if="file.type == 'FOLDER'" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">11 items
-                                                </td>
-                                                <td class="d-none d-md-table-cell" v-else v-bind:data-file-id="file.id" v-on:click="populateInfoPane">{{ formatBytes(file.size) }}
-                                                </td>
-                                                <td class="d-none d-md-table-cell" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">{{ file.updated_at }}</td>
-                                                <td class="d-lg-none" scope="col">
 
-                                                    <div class="dropdown">
-                                                        <button class="btn btn-xs btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            <i class="fa-solid fa-ellipsis-vertical"></i>
-                                                        </button>
-                                                        <ul class="dropdown-menu">
-                                                            <li><a class="dropdown-item" href="#">Move to</a></li>
-                                                            <li><a class="dropdown-item" href="#">Download</a></li>
-                                                            <li><a class="dropdown-item" href="#">Add to Starred</a>
-                                                            </li>
-                                                            <li><a class="dropdown-item" href="#">Trash</a></li>
-                                                        </ul>
-                                                    </div>
-                                                </td>
-                                            </tr>
 
-                                        </tbody>
-                                    </table>
+                                                    <th class="sortable ps-3" scope="col" data-name="name">Name</th>
+                                                    <th class="sortable d-none d-md-table-cell" scope="col" data-name="size" width="100" style="min-width: 100px">Size</th>
+                                                    <th class="sortable d-none d-md-table-cell" scope="col" data-name="updated_at">Last Modified</th>
+                                                    <th class="d-lg-none" scope="col" width="30"></th>
+
+
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="(file, index) of file_folder_map" :key="file.id" v-bind:data-id="file.id">
+                                                    <td class="text-center align-middle">
+                                                        <div>
+                                                            <input class="form-check-input" type="checkbox" v-model="selected" :value="file.id">
+                                                        </div>
+                                                    </td>
+                                                    <td class="d-flex ps-3">
+                                                        <div v-bind:data-file-id="file.id" v-on:click="populateInfoPane" class="d-flex align-items-center flex-grow-1">
+                                                            <img v-if="file.file_type == 'photo'" v-bind:src="file.thumb_url" width="30" height="30" class="me-3" v-bind:data-file-id="file.id" />
+                                                            <i v-else v-bind:class="[ file.icon, 'fa-solid', 'pe-3', 'fa-2x' ]" v-bind:data-file-id="file.id"></i>
+
+                                                            <div class="file-name text-truncate" v-bind:data-file-id="file.id">
+                                                                {{ file.name }}
+                                                            </div>
+                                                        </div>
+                                                        <div class="px-3 d-none d-md-block">
+                                                            <i class="fa-regular fa-star"></i>
+                                                        </div>
+                                                    </td>
+                                                    <td class="d-none d-md-table-cell" v-if="file.type == 'FOLDER'" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">11 items
+                                                    </td>
+                                                    <td class="d-none d-md-table-cell" v-else v-bind:data-file-id="file.id" v-on:click="populateInfoPane">{{ formatBytes(file.size) }}
+                                                    </td>
+                                                    <td class="d-none d-md-table-cell" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">{{ file.updated_at }}</td>
+                                                    <td class="d-lg-none" scope="col">
+
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-xs btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu">
+                                                                <li><a class="dropdown-item" href="#">Move to</a></li>
+                                                                <li><a class="dropdown-item" href="#">Download</a></li>
+                                                                <li><a class="dropdown-item" href="#">Add to Starred</a>
+                                                                </li>
+                                                                <li><a class="dropdown-item" href="#">Trash</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="grid-view pt-0" v-if="show_list == 'false'">
+                        <div class="grid-view pt-0" v-if="show_list == 'false'">
 
-                        <div class="row g-3 mt-1 grid-container">
-                            <div v-for="(file,index) of file_folder_map" :key="file.id" v-bind:data-id="file.id" class="col-6 col-sm-4 col-md-3">
-                                <div class="card" v-bind:data-file-id="file.id">
-                                    <div class="img-container">
-                                        <input class="form-check-input" type="checkbox" v-model="selected" :value="file.id">
-                                        <img v-if="file.file_type == 'photo'" v-bind:src="file.thumb_url" style="width: 100%;" class="card-img-top border-0" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
-                                        <i v-else class="fa-solid fa-file-pdf fa-8x"></i>
-                                    </div>
-                                    <div class="card-body" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
-                                        <div class="card-text d-flex justify-content-between">
-                                            <div class=" text-truncate" style="max-width: 90%;">
-                                                {{file.name}}
-                                            </div>
-                                            <div class="dropdown d-lg-none">
-                                                <button class="btn btn-xs btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="fa-solid fa-ellipsis-vertical"></i>
-                                                </button>
-                                                <ul class="dropdown-menu">
-                                                    <li><a class="dropdown-item" href="#">Move to</a></li>
-                                                    <li><a class="dropdown-item" href="#">Download</a></li>
-                                                    <li><a class="dropdown-item" href="#">Add to Starred</a>
-                                                    </li>
-                                                    <li><a class="dropdown-item" href="#">Trash</a></li>
-                                                </ul>
+                            <div class="row g-3 mt-1 grid-container">
+                                <div v-for="(file,index) of file_folder_map" :key="file.id" v-bind:data-id="file.id" class="col-6 col-sm-4 col-md-3">
+                                    <div class="card" v-bind:data-file-id="file.id">
+                                        <div class="img-container">
+                                            <input class="form-check-input" type="checkbox" v-model="selected" :value="file.id">
+                                            <img v-if="file.file_type == 'photo'" v-bind:src="file.thumb_url" style="width: 100%;" class="card-img-top border-0" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
+                                            <i v-else class="fa-solid fa-file-pdf fa-8x"></i>
+                                        </div>
+                                        <div class="card-body" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
+                                            <div class="card-text d-flex justify-content-between">
+                                                <div class=" text-truncate" style="max-width: 90%;">
+                                                    {{file.name}}
+                                                </div>
+                                                <div class="dropdown d-lg-none">
+                                                    <button class="btn btn-xs btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li><a class="dropdown-item" href="#">Move to</a></li>
+                                                        <li><a class="dropdown-item" href="#">Download</a></li>
+                                                        <li><a class="dropdown-item" href="#">Add to Starred</a>
+                                                        </li>
+                                                        <li><a class="dropdown-item" href="#">Trash</a></li>
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
+
+
                         </div>
-
-
-
                     </div>
 
 
@@ -282,6 +285,6 @@
 <div class="offcanvas offcanvas-lg offcanvas-end" data-bs-backdrop="static" data-bs-scroll="true" tabindex="-1" id="offcanvasResponsive" aria-labelledby="offcanvasResponsiveLabel">
 
     <div class="offcanvas-body p-0">
-    <?= $this->include('drive/sidebar_partials/info_pane') ?>
+        <?= $this->include('drive/sidebar_partials/info_pane') ?>
     </div>
 </div>

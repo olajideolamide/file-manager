@@ -1,5 +1,6 @@
 <info-pane inline-template>
-    <div>
+
+    <div v-if="$parent.current_info_item_object.name">
         <div class="card border-0 border-bottom rounded-0">
             <div class="card-header p-3">
                 <div class="info-pane-header d-flex justify-content-between align-items-center">
@@ -116,6 +117,22 @@
             </div>
         </div>
 
+    </div>
+
+    <div v-else class="text-center">
+        <div class="card border-0 rounded-0  p-0">
+            <div class="card-header">
+                <div class="d-flex flex-row-reverse">
+                    <button v-on:click="$parent.hideInfoPane" type="button" class="btn-close d-none d-lg-inline-flex" aria-label="Close"></button>
+                    <button type="button" class="btn-close d-lg-none" data-bs-dismiss="offcanvas" data-bs-target="#offcanvasResponsive" aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="card-body p-3 mt-5">
+                <img src="/assets/custom/images/info_pane_empty.svg" height="150" class="mb-4" />
+                <h6>Select a file or folder to see details here</h6>
+            </div>
+
+        </div>
     </div>
 
 

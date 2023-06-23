@@ -3,9 +3,9 @@ grid view must be scollable --DONE
 make sure the menu bar and the info bar mobile versions work -- DONE
 make sure the file menu (move, download, share) show properly for mobile -- DONE
 add a checkbox or select indicator for the gridview -- DONE
-make sure all the borders look good (same color)
-show an empty info pane if nothing has been clicked
-show the drag/drop panel if folder is empty
+make sure all the borders look good (same color) -- DONE
+show an empty info pane if nothing has been clicked -- DONE
+show the drag/drop panel if folder is empty -- DONE
 
 
 thumb - photo less than thumb dimensions are not resized (expand more on this)

@@ -383,6 +383,25 @@ input[type=checkbox] {
 }
 
 
+
+
+
+@media (min-width: 1399.98px) {
+  .content-header {
+    height: 5vh;
+    max-height: 5vh
+  }
+
+  #info-pane {
+    height: 95vh;
+    max-height: 95vh;
+    overflow: auto
+  }
+
+
+}
+
+
 @media (max-width: 991.98px) {
 
   .offcanvas-lg.offcanvas-start,
