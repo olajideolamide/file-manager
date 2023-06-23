@@ -71,22 +71,7 @@ function populateModalFormOptions(data) {
 $(function () {
     'use strict'
 
-    $('body').on('click', 'table.custom tbody tr', function (e) {
 
-
-        if ($(e.target).closest('input[type="checkbox"]').length > 0) {
-
-        } else {
-            var this_checkbox = $(this).children(":first").children(":first");
-            this_checkbox.prop("checked", !this_checkbox.prop("checked"));
-
-            if (this_checkbox.prop("checked") == true) $(this).addClass("selected");
-            else $(this).removeClass("selected");
-        }
-
-        customTable_refreshChecked();
-
-    });
 
     //double click a folder in the table view
     $('body').on('dblclick', 'table.custom tbody tr', function (e) {
@@ -187,53 +172,10 @@ function refreshBreadCrumb() {
 
 
 
-function customTable_refreshChecked() {
-    //loop the inputs
-    var count = 0;
-    $('table.custom tbody input').each(function (index) {
-        if ($(this).is(":checked") == true) {
-            count++;
-            $(this).closest("tr").addClass("checked");
-        } else {
-            $(this).closest("tr").removeClass("checked");
-        }
-    });
-
-    refreshOptions(count);
-
-}
-
-
-function refreshOptions(count) {
-
-    $(".option").prop('disabled', true);
-    if (count >= 1) {
-        $(".option").prop('disabled', false);
-    }
-}
 
 
 
 
-
-$(function () {
-
-    //first clear all active
-    $(".table.custom thead th input.check-all").change(function () {
-        // this will contain a reference to the checkbox
-
-        if (this.checked) {
-            $(".table.custom tbody td input").prop('checked', true);
-        } else {
-            $(".table.custom tbody td input").prop('checked', false);
-        }
-
-        customTable_refreshChecked();
-
-    })
-
-
-});
 
 
 

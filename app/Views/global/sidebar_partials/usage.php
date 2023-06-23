@@ -7,7 +7,4 @@
 </div>
 <div class="mx-3 text-center ">
     <div class="mt-2"><small>70MB of 1GB used</small></div>
-
-    <button type="button" class="btn btn-sm btn-outline-primary mt-3">Upgrade</button>
-
 </div>

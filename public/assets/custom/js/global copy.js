@@ -38,10 +38,7 @@ var app = new Vue({
             title: "",
 
         },
-        current_info_item: "",
-        selected: [],
-        all_selected: false,
-        bulk_options_class: "disabled"
+        current_info_item: ""
 
     },
     computed: {
@@ -49,6 +46,8 @@ var app = new Vue({
             // getter
             get: function () {
                 return this.files.reduce((accumulator, item) => {
+
+                    item.selected = false;
                     return {
                         ...accumulator,
                         [item.id]: item
@@ -62,24 +61,23 @@ var app = new Vue({
 
                 return this.file_folder_map[this.current_info_item];
             }
-        }
-
-
-    },
-    watch: {
-        all_selected: function (val) {
-            this.selected = [];
-            if (val == true) {
-                for (var key in this.file_folder_map) {
-
-                    this.selected.push(key);
-                }
-            }
         },
-        selected: function (val) {
-            if (val.length > 0) this.bulk_options_class = "";
-            else this.bulk_options_class = "disabled";
+        enable_bulk_options: {
+            get: function () {
+
+                for (var key in this.file_folder_map) {
+                    console.log(this.file_folder_map);
+                    if (this.file_folder_map[key].selected == true) {
+
+                        return "";
+                    }
+                }
+
+
+                return "disabled";
+            }
         }
+
     },
     methods: {
         truncateThis: function (str, n) {
@@ -105,14 +103,28 @@ var app = new Vue({
             this.info_pane_active_class = '';
         },
         clearAllSelected() {
+            for (var key in this.file_folder_map) {
+                this.file_folder_map[key].selected = false;
+            }
+            $(".table.custom tbody td input").prop('checked', false);
+            $(".table.custom tbody td input").attr("checked", false);
+        },
+        toggleFilesSelect(event) {
+            let value = true;
 
-            this.selected = [];
+            if (event.target.checked != true) value = false;
+            for (var key in this.file_folder_map) {
+                this.file_folder_map[key].selected = value;
+            }
         },
         populateInfoPane(event) {
+            //if (!event.target.dataset.fileId) return;
             this.clearAllSelected();
-            this.all_selected = false;
             this.current_info_item = event.target.dataset.fileId;
-            this.selected.push(event.target.dataset.fileId);
+            this.file_folder_map[event.target.dataset.fileId].selected = true;
+            //this.info_pane_data.title = this.file_folder_map[event.target.dataset.fileId].name;
+            //this.showInfoPane();
+
         }
 
     }

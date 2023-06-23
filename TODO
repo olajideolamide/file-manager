@@ -1,0 +1,30 @@
+make sure the vh are good on all viewports --DONE
+grid view must be scollable --DONE
+make sure the menu bar and the info bar mobile versions work
+make sure the file menu (move, download, share) show properly for mobile -- DONE
+add a checkbox or select indicator for the gridview -- DONE
+make sure all the borders look good (same color)
+show an empty info pane if nothing has been clicked
+show the drag/drop panel if folder is empty
+
+
+thumb - photo less than thumb dimensions are not resized (expand more on this)
+grid view - small photos will be centered in box not streched
+show the right icons for other items
+play video on info bar
+
+star files (individually)
+
+finally test everything
+    -all uploads, file, folder, create folder (make sure they all work)
+    -search work
+    -sort work
+
+
+File Options
+-- Move, Download, Share, Star, Trash
+
+
+Info pane
+-- Add tags to files, load tags
+-- Add comments to files, load comments

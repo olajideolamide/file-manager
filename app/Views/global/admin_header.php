@@ -35,8 +35,8 @@
 <body>
   <div class="container-fluid px-0 py-0" id="apps">
 
-    <div class="row " style="--bs-gutter-x: 0rem;">
-      <nav id="sidebarMenu" class="d-none d-lg-block col-md-2  my-sidebar collapse bg-light">
+    <div class="row g-0" >
+      <nav id="sidebarMenu" class="d-none d-lg-block col-lg-2  my-sidebar collapse bg-light">
         <div class="position-sticky pt-3 sidebar-sticky">
 
           <div class="text-center">
