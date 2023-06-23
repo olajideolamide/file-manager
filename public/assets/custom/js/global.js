@@ -1,8 +1,23 @@
-const loading_div = '<div class="w-75 mx-auto text-center py-5"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>';
-
 $(".dropdown-menu label").click(function (e) {
-    e.stopPropagation(); // if you click on the div itself it will cancel the click event.
+    e.stopPropagation();
 });
+
+Vue.component('admin-menu', {
+    data: function () {
+        return {
+
+        }
+    }
+})
+
+
+Vue.component('info-pane', {
+    data: function () {
+        return {
+
+        }
+    }
+})
 
 Vue.filter('truncate', function (fullStr, strLen, separator) {
     if (!fullStr) return '';

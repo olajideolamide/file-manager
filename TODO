@@ -1,6 +1,6 @@
 make sure the vh are good on all viewports --DONE
 grid view must be scollable --DONE
-make sure the menu bar and the info bar mobile versions work
+make sure the menu bar and the info bar mobile versions work -- DONE
 make sure the file menu (move, download, share) show properly for mobile -- DONE
 add a checkbox or select indicator for the gridview -- DONE
 make sure all the borders look good (same color)

@@ -35,16 +35,7 @@
 <body>
   <div class="container-fluid px-0 py-0" id="apps">
 
-    <div class="row g-0" >
-      <nav id="sidebarMenu" class="d-none d-lg-block col-lg-2  my-sidebar collapse bg-light">
-        <div class="position-sticky pt-3 sidebar-sticky">
-
-          <div class="text-center">
-            <img src="assets/custom/images/icon-new-md.png" width="70" />
-          </div>
-
-          <?= $this->include('global/sidebar_partials/quick_links') ?>
-          <?= $this->include('global/sidebar_partials/usage') ?>
-          <?= $this->include('global/sidebar_partials/user') ?>
-        </div>
+    <div class="row g-0">
+      <nav id="sidebarMenu" class="d-none d-lg-block col-lg-2  my-sidebar collapse bg-light border-end">
+        <?= $this->include('global/sidebar_partials/side_menu') ?>
       </nav>
