@@ -1,11 +1,22 @@
 </div> <!-- row -->
+
+<div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3">
+    <div id="info-toast" class="toast info align-items-center" v-bind:class="toast_class" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-body">
+            {{toast_message}}
+        </div>
+    </div>
+</div>
+
+
 </div> <!-- app -->
 
 <div class="modal fade" id="small-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header p-2 px-3">
-                <div class="modal-title" id="staticBackdropLabel"></div>
+            <div class="modal-header p-3 px-3 border-0">
+                <div class="modal-title fw-bold" id="staticBackdropLabel"></div>
+
                 <button type="button" class="btn-close p-1" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -13,7 +24,7 @@
 
                 </div>
 
-                <div class="d-flex justify-content-end ">
+                <div class="d-flex justify-content-end  py-2">
                     <button type="button" class="btn btn-sm btn-primary submit-btn">Create</button>
                 </div>
             </div>
@@ -25,8 +36,9 @@
 <div class="modal fade" id="large-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header p-2 px-3">
-                <div class="modal-title" id="staticBackdropLabel"></div>
+            <div class="modal-header p-3 px-3 border-0">
+                <div class="modal-title fw-bold" id="staticBackdropLabel"></div>
+
                 <button type="button" class="btn-close p-1" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -34,7 +46,7 @@
 
                 </div>
 
-                <div class="d-flex justify-content-end ">
+                <div class="d-flex justify-content-end py-2">
                     <button type="button" class="btn btn-sm btn-primary submit-btn">Create</button>
                 </div>
             </div>
@@ -58,6 +70,12 @@
         </div>
     </div>
 </div>
+
+
+
+
+
+
 
 
 
@@ -102,7 +120,7 @@
         </div>
     </div>
 </div>
-<!--<button class="btn btn-primary" data-bs-target="#exampleModalToggle" data-bs-toggle="modal">Open first modal</button>-->
+
 
 
 
@@ -117,6 +135,10 @@
 <script>
     <?php if (!empty($content["table_src_url"])) : ?>
         let table_src_url = "<?php echo $content["table_src_url"]; ?>";
+    <?php endif; ?>
+
+    <?php if (!empty($content["folder_id"])) : ?>
+        let folder_id = "<?php echo $content["folder_id"]; ?>";
     <?php endif; ?>
 
     let csrf_token_name = "<?php echo csrf_token(); ?>";

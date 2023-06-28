@@ -45,10 +45,21 @@ class Photo extends APIController
         $img = $manager->make($file_contents);
 
 
-        $img->fit($width, $height, function ($constraint) {
-            //$constraint->aspectRatio();
-            $constraint->upsize();
-        }, 'top');
+
+        if ($img->height() < $height || $img->width() < $width) {
+            $img->resizeCanvas(300, 300);
+        } else {
+            $img->fit($width, $height, function ($constraint) {
+                //$constraint->aspectRatio();
+                $constraint->upsize();
+            }, 'top');
+        }
+
+
+
+
+
+
 
         $resized = $img->encode();
         $stream = fopen('php://memory', 'r+');

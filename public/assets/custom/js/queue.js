@@ -210,7 +210,7 @@ function upload(job) {
             }, false);
             return xhr;
         },
-        url: 'api/drive/upload',
+        url: '/api/drive/upload',
         type: 'post',
         enctype: 'multipart/form-data',
         data: form_data,
@@ -257,8 +257,9 @@ var create_folder_callback = function (data, status_text) {
 
     //insert the folder into the tree
     $.each(data.data, function (key, item) {
-        insertFileFolder(key, item);
+        insertFileFolder(key, item, true);
     });
     closeModal();
     refreshFolders(data.folders);
+    app.toast_message = "Folder Created";
 }

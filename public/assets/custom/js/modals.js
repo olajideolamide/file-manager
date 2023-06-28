@@ -33,8 +33,8 @@ $('body').on('click', '#small-modal.modal .submit-btn', function () {
 
 function getCreateFolderModalContent(call_back) {
     if (!call_back) call_back = "create_folder_callback";
-    return `<form class="modal-form" action="api/drive/folder" method="post" callback="` + call_back + `">
-    <input name="name" type="text" class="form-control form-control-sm" placeholder="Enter a name" required>
+    return `<form class="modal-form" action="/api/drive/folder" method="post" callback="` + call_back + `">
+    <input name="name" type="text" class="form-control form-control-sm" placeholder="Enter a name" required minlength="3" maxlength="200">
 </form>`;
 }
 
@@ -43,6 +43,6 @@ function getCreateFolderModalContent(call_back) {
 
 let move_modal_content =
     `<a class=" text-primary" data-bs-target="#small-modal" data-bs-toggle="modal">Create Folder</a>
-    <form class="modal-form" action="api/drive/folder" method="post" callback="create_folder_callback">
+    <form class="modal-form" action="/api/drive/folder" method="post" callback="create_folder_callback">
             <input name="name" type="text" class="form-control form-control-sm" placeholder="Enter a name" required>
     </form>`;

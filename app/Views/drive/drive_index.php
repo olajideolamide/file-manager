@@ -38,9 +38,33 @@
 
         <div id="main-pane" class="col-12" v-bind:class="[main_pane_active_class]">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-0 mb-2 mx-3">
-                <div>
+                <div class="breadcrumb-container">
                     <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
                         <ol class="breadcrumb me-2 mb-0">
+
+
+                            <li class="breadcrumb-item breadcrumb-clickable active" aria-current="page" v-bind:data-id="root_breadcrumb.id">
+                                <a href="#">{{root_breadcrumb.name}} </a>
+                            </li>
+
+
+                            <li v-if="dropdown_breadcrumb.length > 0" class="breadcrumb-item">
+                                <div class="btn-group p-0" role="group">
+                                    <a class="dropdown-item" href="#" class="dropdown-toggle no-icon p-0" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fa-solid fa-ellipsis"></i>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li v-for="bread2 in dropdown_breadcrumb" class="breadcrumb-clickable" aria-current="page" v-bind:data-id="bread2.id">
+                                            <a class="dropdown-item" href="#"><i class="fa-solid fa-folder"></i> {{bread2.name}} </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <li v-for="(bread, index) in visible_breadcrumb" class="breadcrumb-item breadcrumb-clickable active" aria-current="page" v-bind:data-id="bread.id">
+                                <a href="#">{{bread.name}} </a>
+                            </li>
+
 
                         </ol>
                     </nav>
@@ -170,7 +194,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr v-for="(file, index) of file_folder_map" :key="file.id" v-bind:data-id="file.id">
+                                                <tr v-for="(file, index) of files" :key="file.id" v-bind:data-id="file.id">
                                                     <td class="text-center align-middle">
                                                         <div>
                                                             <input class="form-check-input" type="checkbox" v-model="selected" :value="file.id">
@@ -179,19 +203,25 @@
                                                     <td class="d-flex ps-3">
                                                         <div v-bind:data-file-id="file.id" v-on:click="populateInfoPane" class="d-flex align-items-center flex-grow-1">
                                                             <img v-if="file.file_type == 'photo'" v-bind:src="file.thumb_url" width="30" height="30" class="me-3" v-bind:data-file-id="file.id" />
-                                                            <i v-else v-bind:class="[ file.icon, 'fa-solid', 'pe-3', 'fa-2x' ]" v-bind:data-file-id="file.id"></i>
+
+                                                            <img v-else src="/assets/custom/images/icons/untitled.svg" width="30" height="30" class="me-3" />
+
+
+                                                            <!--<i v-else v-bind:class="[ file.icon, 'fa-solid', 'pe-3', 'fa-2x' ]" v-bind:data-file-id="file.id"></i>-->
 
                                                             <div class="file-name text-truncate" v-bind:data-file-id="file.id">
                                                                 {{ file.name }}
                                                             </div>
                                                         </div>
                                                         <div class="px-3 d-none d-md-block">
-                                                            <i class="fa-regular fa-star"></i>
+                                                            <i class="fa-solid fa-star"></i>
                                                         </div>
                                                     </td>
-                                                    <td class="d-none d-md-table-cell" v-if="file.type == 'FOLDER'" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">11 items
+                                                    <td class="d-none d-md-table-cell" v-if="file.type == 'FOLDER'" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">Folder
                                                     </td>
-                                                    <td class="d-none d-md-table-cell" v-else v-bind:data-file-id="file.id" v-on:click="populateInfoPane">{{ formatBytes(file.size) }}
+                                                    <td class="d-none d-md-table-cell" v-else v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
+                                                        {{ formatBytes(file.size) }}
+
                                                     </td>
                                                     <td class="d-none d-md-table-cell" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">{{ file.updated_at }}</td>
                                                     <td class="d-lg-none" scope="col">
@@ -220,16 +250,20 @@
                         <div class="grid-view pt-0" v-if="show_list == 'false'">
 
                             <div class="row g-3 mt-1 grid-container">
-                                <div v-for="(file,index) of file_folder_map" :key="file.id" v-bind:data-id="file.id" class="col-6 col-sm-4 col-md-3">
-                                    <div class="card" v-bind:data-file-id="file.id">
-                                        <div class="img-container">
+                                <div v-for="(file,index) of files" :key="file.id" v-bind:data-id="file.id" class="col-6 col-sm-4 col-md-3">
+                                    <div class="card" v-bind:data-file-id="file.id" v-bind:data-id="file.id">
+                                        <div class="img-container" style="height: 90%" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
                                             <input class="form-check-input" type="checkbox" v-model="selected" :value="file.id">
-                                            <img v-if="file.file_type == 'photo'" v-bind:src="file.thumb_url" style="width: 100%;" class="card-img-top border-0" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
-                                            <i v-else class="fa-solid fa-file-pdf fa-8x"></i>
+                                            <img v-if="file.file_type == 'photo'" v-bind:src="file.thumb_url" style="width: auto; max-width: 100%; object-fit: cover;" class="card-img-top border-0" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
+
+                                            <img v-else src="/assets/custom/images/icons/file.svg" style="width: auto; max-width: 100%; object-fit: cover;" class="card-img-top border-0" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
+
+
+                                            <!--<i v-else class="card-img-top fa-solid fa-8x mt-4 mb-2" :class="file.icon" v-bind:data-file-id="file.id" v-on:click="populateInfoPane"></i>-->
                                         </div>
                                         <div class="card-body" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
                                             <div class="card-text d-flex justify-content-between">
-                                                <div class=" text-truncate" style="max-width: 90%;">
+                                                <div class="text-truncate" style="max-width: 90%;" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
                                                     {{file.name}}
                                                 </div>
                                                 <div class="dropdown d-lg-none">
@@ -288,3 +322,5 @@
         <?= $this->include('drive/sidebar_partials/info_pane') ?>
     </div>
 </div>
+
+

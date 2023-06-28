@@ -3,7 +3,7 @@
     <div class="pt-3">
 
         <div class="text-center">
-            <img src="assets/custom/images/icon-new-md.png" width="70" />
+            <img src="/assets/custom/images/icon-new-md.png" width="70" />
         </div>
 
         <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">

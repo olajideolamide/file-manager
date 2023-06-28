@@ -56,38 +56,74 @@ var app = new Vue({
         current_info_item: "",
         selected: [],
         all_selected: false,
-        bulk_options_class: "disabled"
+        bulk_options_class: "disabled",
+        breadcrumb: [],
+        root_breadcrumb: {
+            "id": "",
+            "name": "All Files"
+        },
+        visible_breadcrumb: [],
+        dropdown_breadcrumb: [],
+        toast_class: "text-bg-dark",
+        toast_message: ""
 
     },
     computed: {
-        file_folder_map: {
-            // getter
-            get: function () {
-                return this.files.reduce((accumulator, item) => {
-                    return {
-                        ...accumulator,
-                        [item.id]: item
-                    };
-                }, {});
-            }
-        },
         current_info_item_object: {
             get: function () {
-                if (!this.current_info_item) return {};
-
-                return this.file_folder_map[this.current_info_item];
+                if (!this.current_info_item || !this.getItemFromFiles(this.current_info_item)) return {};
+                return this.getItemFromFiles(this.current_info_item);
             }
         }
 
 
     },
     watch: {
+        toast_message: function () {
+
+            $("#info-toast").toast("show");
+
+        },
+        breadcrumb: function () {
+            let len = this.breadcrumb.length;
+            this.dropdown_breadcrumb = [];
+            this.visible_breadcrumb = this.breadcrumb;
+            if (len > 5) {
+                this.dropdown_breadcrumb = this.breadcrumb.slice(0, -4);
+                this.visible_breadcrumb = this.breadcrumb.slice(-4);
+                //this.visible_breadcrumb.unshift(this.breadcrumb[0]);
+            }
+
+
+        },
+        parent: function () {
+            //update the breadcrumb view, the parent id must be the last item on  the breadcrumb
+            //refresh the breadcrumb by getting the paths
+
+            refetchPath();
+
+            //let temp = [];
+            //if (this.parent == "") this.breadcrumb = [];
+            //for (bread of this.breadcrumb) {
+            //temp.push(bread);
+            //if (this.parent == bread.id) {
+            //this.breadcrumb = temp;
+            //return;
+            //}
+
+
+
+            //}
+
+        },
+        search_term: function () {
+            refetchData();
+        },
         all_selected: function (val) {
             this.selected = [];
             if (val == true) {
-                for (var key in this.file_folder_map) {
-
-                    this.selected.push(key);
+                for (val of this.files) {
+                    this.selected.push(val.id);
                 }
             }
         },
@@ -97,6 +133,11 @@ var app = new Vue({
         }
     },
     methods: {
+        getItemFromFiles(id) {
+            return this.files.filter(obj => {
+                return obj.id == id
+            })[0]
+        },
         truncateThis: function (str, n) {
             return (str.length > n) ? str.slice(0, n - 1) + "..." : str;
         },
@@ -124,10 +165,17 @@ var app = new Vue({
             this.selected = [];
         },
         populateInfoPane(event) {
+
             this.clearAllSelected();
             this.all_selected = false;
             this.current_info_item = event.target.dataset.fileId;
             this.selected.push(event.target.dataset.fileId);
+        },
+        showToast(msg, toast_class) {
+
+
+
+
         }
 
     }
@@ -212,3 +260,11 @@ function objectifyForm(formArray) {
     }
     return returnArray;
 }
+
+
+
+$(document).ready(function () {
+    $("#myBtn").click(function () {
+
+    });
+});

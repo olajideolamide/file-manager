@@ -10,16 +10,9 @@ var BREADCRUMB = [];
 var CURRENT_VIEW = "table";
 
 
-
-
-
-BREADCRUMB[0] = {
-    id: "",
-    name: "Home",
-    index: 0
-};
-
 var TABLE_FILTERS = {};
+
+var PUSH_STATE = true;
 
 
 /**
@@ -28,13 +21,25 @@ var TABLE_FILTERS = {};
 function refetchData() {
 
     var data = getOptions();
+
     request(table_src_url, data, "get", "refresh_table");
+}
+
+function refetchPath() {
+
+    var data = {};
+    if (app.parent == "") {
+        app.breadcrumb = [];
+        return;
+    }
+    request("/api/drive/path/" + app.parent, data, "get", "handle_path");
 }
 
 
 //initialize the table and load the default view
 $(function () {
-    refreshBreadCrumb();
+
+    if (typeof folder_id !== 'undefined' && folder_id !== null) app.parent = folder_id;
     refetchData();
 })
 
@@ -74,18 +79,16 @@ $(function () {
 
 
     //double click a folder in the table view
-    $('body').on('dblclick', 'table.custom tbody tr', function (e) {
+    $('body').on('dblclick', 'table.custom tbody tr, .grid-view .card', function (e) {
 
-        var item = app.file_folder_map[$(this).data("id")];
+        var item = app.getItemFromFiles($(this).data("id"));
+
 
         if (item["type"] == "FOLDER") {
-            incrementBreadcrumb({
-                id: item["id"],
-                name: item["name"],
-                index: BREADCRUMB.length
-            });
 
-            updateParent(item["id"]);
+            updateParent(item.id);
+
+
         }
 
 
@@ -93,7 +96,7 @@ $(function () {
 
     //click on a breadcrumb item
     $('body').on('click', '.breadcrumb-clickable', function (e) {
-        pruneBreadcrumb($(this).data("index"));
+
         clearOptions();
         updateParent($(this).data("id"));
     });
@@ -115,59 +118,30 @@ $(function () {
 
 })
 
+
+window.onpopstate = function (e) {
+    if (e.state) {
+        //document.getElementById("content").innerHTML = e.state.html;
+        //document.title = e.state.pageTitle;
+        console.log(e.state);
+
+
+        app.search_term = e.state.search;
+        app.sort_column = e.state.sort;
+        app.sort_dir = e.state.dir;
+        app.parent = e.state.parent;
+        PUSH_STATE = false;
+        refetchData();
+
+    }
+};
+
 function updateParent(parent) {
     app.parent = parent;
     refetchData();
 }
 
-function incrementBreadcrumb(entry) {
-    BREADCRUMB.push(entry);
-    refreshBreadCrumb();
-}
 
-function pruneBreadcrumb(index) {
-    BREADCRUMB = BREADCRUMB.slice(0, index + 1);
-    refreshBreadCrumb();
-}
-
-function refreshBreadCrumb() {
-    let markup = "";
-    let len = BREADCRUMB.length;
-    let breadcrumb_dropdown = [];
-    let visible_breadcrumb = BREADCRUMB;
-    if (len > 5) {
-        breadcrumb_dropdown = BREADCRUMB.slice(1, -4);
-        visible_breadcrumb = BREADCRUMB.slice(-4);
-        visible_breadcrumb.unshift(BREADCRUMB[0]);
-    }
-
-    let active = "";
-
-    visible_breadcrumb.forEach((entry, index) => {
-        if (visible_breadcrumb.length == index + 1) active = "active";
-        markup += `<li class="breadcrumb-item breadcrumb-clickable ` + active + `" aria-current="page" data-id="` + entry["id"] + `" data-index="` + entry["index"] + `">`;
-        if (visible_breadcrumb.length != index + 1) markup += `<a href="#" >`;
-        markup += entry["name"];
-        if (visible_breadcrumb.length != index + 1) markup += `</a>`;
-        markup += `</li>`;
-
-        if (index == 0 && len > 5) {
-            markup += `<li class="breadcrumb-item">`;
-            markup += `<div class="btn-group p-0" role="group">
-                            <a class="dropdown-item" href="#" class="dropdown-toggle no-icon p-0" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fa-solid fa-ellipsis"></i>
-                            </a>
-                            <ul class="dropdown-menu">`;
-            breadcrumb_dropdown.forEach((entry2) => {
-                markup += `<li class="breadcrumb-clickable" aria-current="page" data-id="` + entry["id"] + `" data-index="` + entry["index"] + `"><a class="dropdown-item" href="#"><i class="fa-solid fa-folder"></i> ` + entry2["name"] + `</a></li>`;
-            });
-
-
-            markup += `</ul></div> </li>`;
-        }
-    });
-    $(".breadcrumb").html(markup);
-}
 
 
 
@@ -200,7 +174,7 @@ function refreshFolders(data) {
         this_parent = app.parent;
         if (!this_parent) this_parent = null;
 
-        if (item["parent_id"] == this_parent && !app.file_folder_map[item["id"]]) {
+        if (item["parent_id"] == this_parent && !app.getItemFromFiles(item["id"])) {
             insertFileFolder(0, item);
         }
 
@@ -212,6 +186,7 @@ function refreshFolders(data) {
 
 var refresh_table = function (data, status_text) {
 
+    app.files = [];
 
     if (status_text) {
         //we show error
@@ -222,6 +197,35 @@ var refresh_table = function (data, status_text) {
         insertFileFolder(key, item);
     });
 
+    let url_path;
+    if (PUSH_STATE == true) {
+        if (app.parent == "") {
+            url_path = "/drive";
+        } else {
+            url_path = "/drive/" + btoa(app.parent.toString().padEnd(10, "padding")).replace(/=+/, "");
+        }
+        window.history.pushState(getOptions(), "", url_path);
+    } else {
+        PUSH_STATE = true;
+    }
+
+};
+
+var handle_path = function (data, status_text) {
+
+
+    if (status_text) {
+        //we show error
+        return;
+    }
+
+    app.breadcrumb = [];
+    $.each(data.data, function (key, item) {
+        app.breadcrumb.push({
+            "id": item.id,
+            "name": item.name
+        });
+    });
 };
 
 
@@ -229,11 +233,13 @@ var refresh_table = function (data, status_text) {
 
 
 
-function insertFileFolder(key, item) {
+function insertFileFolder(key, item, prepend = false) {
     let this_parent = app.parent;
     if (!this_parent) this_parent = null;
     if (item["parent_id"] != this_parent) return;
-    app.files.push(item);
+
+    if (prepend == true) app.files.unshift(item);
+    else app.files.push(item);
 
 }
 
@@ -241,7 +247,7 @@ function insertFileFolder(key, item) {
 
 $(function () {
 
-    $(".table.custom thead th.sortable").click(function (e) {
+    $('body').on('click', '.table.custom thead th.sortable', function (e) {
 
         //first clear all active
         $(".table.custom thead th.sortable").removeClass("active");

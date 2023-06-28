@@ -290,6 +290,10 @@ fieldset:disabled .btn {
   align-items: center;
 }
 
+.grid-view .card{
+  max-height: 320px;
+}
+
 .hover-dark:hover {
   color: black !important;
 }
@@ -357,6 +361,10 @@ input[type=checkbox] {
 }
 
 
+.breadcrumb-item a{
+  text-decoration: none;
+}
+
 
 
 
@@ -402,6 +410,8 @@ input[type=checkbox] {
 }
 
 
+
+
 @media (max-width: 991.98px) {
 
   .offcanvas-lg.offcanvas-start,
@@ -409,4 +419,24 @@ input[type=checkbox] {
     width: 300px;
   }
 }
+
+
+@media (max-width: 768px) {
+  .breadcrumb-container{
+    margin-bottom: 10px;
+    line-height: 1.3rem;
+  }
+
+
+
+}
+
+
+
+
+
+
+
+
+
 

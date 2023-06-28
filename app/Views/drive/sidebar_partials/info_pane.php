@@ -56,7 +56,7 @@
                             <span class="w-one-third d-inline-block text-secondary">Saved in</span>
                             <span class="w-two-third d-inline-block text-primary pointer">{{$parent.current_info_item_object.parent_name}}</span>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3" v-if="$parent.current_info_item_object.type == 'FILE'">
                             <span class="w-one-third d-inline-block text-secondary">Size</span>
                             <span class="w-two-third d-inline-block text-dark">{{ $parent.formatBytes($parent.current_info_item_object.size) }}</span>
                         </div class="mb-3">

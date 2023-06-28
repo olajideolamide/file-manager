@@ -45,6 +45,7 @@ $routes->group('auth', static function ($routes) {
 /** Drive */
 $routes->group('drive', static function ($routes) {
     $routes->match(['get'], '/', 'Drive::index', ['filter' => 'authFilter']);
+    $routes->match(['get'], '(:segment)', 'Drive::index/$1', ['filter' => 'authFilter']);
 });
 
 
@@ -53,6 +54,7 @@ $routes->group('api', static function ($routes) {
     $routes->match(['get'], 'drive/file-entries', 'API\Drive::fileEntries');
     $routes->match(['post'], 'drive/upload', 'API\Drive::upload');
     $routes->match(['post'], 'drive/folder', 'API\Drive::createFolder');
+    $routes->match(['get'], 'drive/path/(:num)', 'API\Drive::path/$1');
 
     $routes->match(['get'], 'photo/thumb/(:num)', 'API\Photo::thumb/$1');
     $routes->match(['get'], 'photo/resize/(:segment)/(:num)', 'API\Photo::resize/$1/$2');
