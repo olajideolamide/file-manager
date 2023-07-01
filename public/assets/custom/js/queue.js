@@ -14,6 +14,8 @@ $('#upload-folder').on('click', function () {
 });
 
 
+
+
 function getRelativePath(path_array, pop_count) {
 
     let p_array = [];
@@ -110,6 +112,17 @@ $('#file-input, #folder-input').on('change', function () {
 
 });
 
+function getJobCount() {
+    var count = 0;
+    for (let i = 0; i < QUEUE.length; i++) {
+        if (QUEUE[i].status == "waiting") {
+            count++;
+        }
+    }
+
+    return count;
+}
+
 
 
 
@@ -120,7 +133,13 @@ function processQueue() {
 
     let job = getPendingJob();
 
-    if (job == false) return;
+    if (job == false) {
+        $(".queue-stats").html("Upload complete");
+        return;
+    }
+
+    var remaining = getJobCount();
+    if (remaining > 0) $(".queue-stats").html("Uploading " + remaining + " files");
 
     QUEUE_FLAG = true;
 
@@ -148,6 +167,9 @@ function getPendingJob() {
     return false;
 
 }
+
+
+
 
 function updateJobStatus(local_id, status) {
     for (let i = 0; i < QUEUE.length; i++) {

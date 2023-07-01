@@ -85,7 +85,7 @@ class Drive extends APIController
 
     public function upload()
     {
-        //sleep(6000);
+
         $adapter = new LocalFilesystemAdapter(WRITEPATH . "/storage");
         $filesystem = new Filesystem($adapter);
 
