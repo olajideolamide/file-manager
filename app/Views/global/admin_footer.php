@@ -14,7 +14,7 @@
         <div id="queue-toast" class="toast fase text-bg-light" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
 
-                <strong class="me-auto"></strong>
+                <strong class="me-auto">Uploading 5 files</strong>
 
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
