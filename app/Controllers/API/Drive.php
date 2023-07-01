@@ -18,20 +18,33 @@ class Drive extends APIController
     {
         $drive_model = model('DriveModel', true, $this->db);
         $options = $this->request->getGet();
-        $response["data"] = $drive_model->getDrive(session()->get('id'), $options, true);
+        $response = $drive_model->getDrive(session()->get('id'), $options, true);
 
-        $response["folders"] = $drive_model->getFolders(session()->get('id'), true);
+        return $this->respond($response, 200);
+    }
+
+
+    /**
+     * Get all folders in a workspace
+     */
+    public function folders()
+    {
+        $drive_model = model('DriveModel', true, $this->db);
+
+        //TODO limit it to a workspace
+        $options = $this->request->getGet();
+        $response = $drive_model->getFolders($options,  true);
 
         return $this->respond($response, 200);
     }
 
     /**
-     * List files and folders based on a set of options for the logged in user
+     * Get path for a given file entry
      */
     public function path($file_id)
     {
         $drive_model = model('DriveModel', true, $this->db);
-        $response["data"] = $drive_model->path($file_id);
+        $response = $drive_model->path($file_id);
 
         return $this->respond($response, 200);
     }
@@ -39,6 +52,15 @@ class Drive extends APIController
 
     public function createFolder()
     {
+
+        $rules = [
+            'name' => 'required|min_length[3]|max_length[50]'
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->fail($this->validator->listErrors(), 400);
+        }
+
         $file_data = array();
         $file_data["name"] = $this->request->getPost('name');
         $file_data["type"] = "FOLDER";
@@ -48,14 +70,14 @@ class Drive extends APIController
         if (!empty($this->request->getPost('parent'))) $file_data["parent_id"] =  $this->request->getPost('parent');
 
 
-        $drive_model = new \App\Models\DriveModel($this->db);
+        $drive_model = model('DriveModel', true, $this->db);
         $id = $drive_model->createFolder($file_data);
 
         $folder_data = $drive_model->getFile($id, TRUE);
 
         $response = array("status" => "complete", "data" => $folder_data);
 
-        $response["folders"] = $drive_model->getFolders(session()->get('id'), true);
+        //$response["folders"] = $drive_model->getFolders(session()->get('id'), true);
 
         return $this->respondCreated($response);
     }
@@ -63,18 +85,14 @@ class Drive extends APIController
 
     public function upload()
     {
-
-
+        //sleep(6000);
         $adapter = new LocalFilesystemAdapter(WRITEPATH . "/storage");
         $filesystem = new Filesystem($adapter);
-
-
 
         $stream = fopen($_FILES['file']['tmp_name'], 'r+');
 
 
         try {
-
 
             //first find out if this file contains a folder
             $path_array = explode("/", (string)$this->request->getPost('name'));
@@ -143,9 +161,11 @@ class Drive extends APIController
 
             $file_data = $drive_model->getFile($id, TRUE);
 
-            $folders = $drive_model->getFolders(session()->get('id'), true);
 
-            $response = array("status" => "complete", "id" => $this->request->getPost("local_id"), "data" => $file_data, "folders" => $folders);
+
+            $file_data[0]["local_id"] = $this->request->getPost("local_id");
+
+            $response = $file_data;
 
             return $this->respondCreated($response);
         } catch (FilesystemException | UnableToWriteFile $exception) {

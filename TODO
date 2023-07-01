@@ -1,34 +1,12 @@
-make sure the vh are good on all viewports --DONE
-grid view must be scollable --DONE
-make sure the menu bar and the info bar mobile versions work -- DONE
-make sure the file menu (move, download, share) show properly for mobile -- DONE
-add a checkbox or select indicator for the gridview -- DONE
-make sure all the borders look good (same color) -- DONE
-show an empty info pane if nothing has been clicked -- DONE
-show the drag/drop panel if folder is empty -- DONE
-
-
-thumb - photo less than thumb dimensions are not resized (expand more on this) -- DONE
-grid view - small photos will be centered in box not streched -- DONE
-show the right icons for other items -- DONE
+CHNAGE THE APP VUE to FILES_APP VUE -- DONE
+STOP sending folder data when creating folder/ uploading files. Just watch for changes and fetch. Bad design -- DONE
+API should not send $data["data"], should only send data -- DONE
+SHOW the right icons with svg -- DONE
+DONT hyperlinlink the last breadcrumb --DONE
 
 
 
-finally test everything
-    -all uploads, file, folder, create folder (make sure they all work) -- DONE
-    -search work -- DONE
-    -sort work -- DONE
-    -breadcrumb / mobile --DONE
-    -go back with the browser arrow -- DONE
-
-
-
-FOLDER size -- DONE
-info pane dont show size if its folder -- DONE
-fa icons need to center horizontally -- DONE
-show toast when folder is created -- DONE
-
-validation for inputs / modals
+UPLOADING 5 of 30
 pagination
 star files (individually)
 
@@ -55,4 +33,6 @@ https://www.mysqltutorial.org/mysql-adjacency-list-tree/
 https://www.reshot.com/free-svg-icons/item/file-formats-flat-multicolor-icons-HCK8PU3MX9/
 
 https://boxy-svg.com/
+
+https://bedrive.vebto.com/api/v1/file-entries?
 

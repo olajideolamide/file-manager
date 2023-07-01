@@ -29,7 +29,7 @@ function getRelativePath(path_array, pop_count) {
 }
 
 function getParent(full_path, level) {
-    let this_parent = app.parent;
+    let this_parent = file_app.parent;
 
     let path_array = full_path.split("/");
     let relative_path = getRelativePath(path_array, level);
@@ -46,7 +46,7 @@ function getParent(full_path, level) {
 
 $('#file-input, #folder-input').on('change', function () {
 
-    let queue_parent = app.parent;
+    let queue_parent = file_app.parent;
     let html = "";
 
     const files = this.files;
@@ -62,7 +62,7 @@ $('#file-input, #folder-input').on('change', function () {
     for (let i = 0; i < files.length; i++) {
 
         file_parent = "";
-        if (app.parent) file_parent = app.parent;
+        if (file_app.parent) file_parent = file_app.parent;
 
         file = files.item(i);
 
@@ -205,7 +205,6 @@ function upload(job) {
                 if (evt.lengthComputable) {
                     var percentComplete = (evt.loaded / evt.total) * 100;
                     updateJobProgress(job.id, Math.round(percentComplete))
-
                 }
             }, false);
             return xhr;
@@ -217,26 +216,20 @@ function upload(job) {
         contentType: false,
         processData: false,
         dataType: 'json',
-        timeout: 600000, //10 minutes
+        timeout: 0,
         cache: false,
         success: function (response) {
-            if (response.status == "complete") {
 
-                $.each(response.data, function (key, item) {
-                    insertFileFolder(key, item);
-                });
+            $.each(response, function (key, item) {
+                insertFileFolder(key, item);
+                updateJobStatus(item.local_id, "complete");
+            });
 
-                refreshFolders(response.folders);
+            refreshFolders();
 
-                updateJobStatus(response.id, "complete");
+            stopQueue();
+            processQueue();
 
-                stopQueue();
-                processQueue();
-            } else {
-                updateJobStatus(response.id, "failed");
-                stopQueue();
-                processQueue();
-            }
         },
         error: function (jqXHR, status) {
             updateJobStatus(QUEUE_CURRENT, "failed");
@@ -245,21 +238,4 @@ function upload(job) {
 
         },
     });
-}
-
-
-
-
-var create_folder_callback = function (data, status_text) {
-    if (status_text) {
-        //show the error
-    }
-
-    //insert the folder into the tree
-    $.each(data.data, function (key, item) {
-        insertFileFolder(key, item, true);
-    });
-    closeModal();
-    refreshFolders(data.folders);
-    app.toast_message = "Folder Created";
 }

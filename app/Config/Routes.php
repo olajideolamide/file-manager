@@ -51,13 +51,20 @@ $routes->group('drive', static function ($routes) {
 
 
 $routes->group('api', static function ($routes) {
-    $routes->match(['get'], 'drive/file-entries', 'API\Drive::fileEntries');
-    $routes->match(['post'], 'drive/upload', 'API\Drive::upload');
-    $routes->match(['post'], 'drive/folder', 'API\Drive::createFolder');
-    $routes->match(['get'], 'drive/path/(:num)', 'API\Drive::path/$1');
+    $routes->match(['get'], 'drive/file-entries', 'API\Drive::fileEntries'); //get file entries
+    $routes->match(['post'], 'drive/upload', 'API\Drive::upload');  //upload
+    $routes->match(['post'], 'drive/folder', 'API\Drive::createFolder'); //create folder
+    $routes->match(['get'], 'drive/folders', 'API\Drive::folders'); //grab all folders for this parent
+    $routes->match(['get'], 'drive/path/(:num)', 'API\Drive::path/$1'); //get path
 
-    $routes->match(['get'], 'photo/thumb/(:num)', 'API\Photo::thumb/$1');
-    $routes->match(['get'], 'photo/resize/(:segment)/(:num)', 'API\Photo::resize/$1/$2');
+    $routes->match(['get'], 'photo/thumb/(:num)', 'API\Photo::thumb/$1'); //get thumb
+    $routes->match(['get'], 'photo/resize/(:segment)/(:num)', 'API\Photo::resize/$1/$2'); //resize a photo
+});
+
+
+
+$routes->group('api/modal', static function ($routes) {
+    $routes->match(['get'], 'drive/new-folder', 'API\Modal\Drive::newFolder');
 });
 
 

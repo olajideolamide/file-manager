@@ -187,7 +187,6 @@ small {
   background-position: center;
   z-index: 10000000;
   opacity: 0.6;
-  filter: alpha(opacity=40);
 }
 
 .table.custom th {
@@ -366,6 +365,10 @@ input[type=checkbox] {
 }
 
 
+.toast ul {
+  list-style-type: none;
+  padding: 0;
+}
 
 
 

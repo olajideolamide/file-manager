@@ -27,9 +27,11 @@
                 <div class="text-center">
                     <!---->
 
-                    <span v-if="$parent.current_info_item_object.file_type == 'photo'">
-                        <img v-bind:src="$parent.current_info_item_object.thumb_url" class="w-50" /></span>
+                    <span v-if="$parent.current_info_item_object.file_type == 'photo'"><img v-bind:src="$parent.current_info_item_object.thumb_url" class="w-50" /></span>
                     <span v-else-if="$parent.current_info_item_object.file_type == 'video'">12 items</span>
+
+                    <large-folder v-else-if="$parent.current_info_item_object.type == 'FOLDER'" v-bind:id="$parent.current_info_item_object.id"></large-folder>
+                    <large-icon v-else v-bind:text="$parent.current_info_item_object.extension" v-bind:id="$parent.current_info_item_object.id"></large-icon>
 
                     <i v-else class="fa fa-solid fa-10x" v-bind:class="[ $parent.current_info_item_object.icon ]"></i>
                 </div>

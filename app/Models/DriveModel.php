@@ -44,7 +44,7 @@ class DriveModel
     {
         $path = array();
         $parent_id = $id;
-        while(true){
+        while (true) {
             $sql = "SELECT id, name, parent_id FROM file WHERE file.id = ?";
             $query = $this->db->query($sql, array($parent_id));
             $file = $query->getRowArray();
@@ -53,8 +53,7 @@ class DriveModel
             $parent_id = $file["parent_id"];
 
 
-            if(empty($file["parent_id"])) break;
-
+            if (empty($file["parent_id"])) break;
         }
 
         return array_reverse($path);
@@ -71,16 +70,7 @@ class DriveModel
         return $query->getResult('array');
     }
 
-    public function getFolders($user_id, $prepare = false)
-    {
 
-        $sql = "SELECT file.*, user.first_name FROM file LEFT JOIN user ON file.user_id = user.id WHERE file.type = 'FOLDER' AND file.user_id = ?";
-
-        $query = $this->db->query($sql, array($user_id));
-
-        if ($prepare === true) return $this->prepareDriveData($query->getResult('array'));
-        return $query->getResult('array');
-    }
 
 
     public function getFileFolderByName($name, $parent = null)
@@ -121,6 +111,29 @@ class DriveModel
 
         $query = $this->db->query($sql, $options);
         return $query->getRowArray();
+    }
+
+
+    public function getFolders($options, $prepare = false)
+    {
+        //TODO get is always going to be limited by workspace ID. The workspace ID permission is checked before hitting the model
+        //TODO this applies to all the functions in this model
+        $query_filters = array();
+        $sql = "SELECT file.*, user.first_name FROM file LEFT JOIN user ON file.user_id = user.id WHERE file.type = 'FOLDER'";
+
+        if(!empty($options["parent"])){
+            $sql .= " AND file.parent_id = ?";
+            $query_filters[] = $options["parent"];
+        }else{
+            $sql .= " AND file.parent_id IS NULL";
+        }
+
+        $sql .= " ORDER BY file.updated_at DESC";
+
+        $query = $this->db->query($sql, array($query_filters));
+
+        if ($prepare === true) return $this->prepareDriveData($query->getResult('array'));
+        return $query->getResult('array');
     }
 
 
@@ -201,10 +214,10 @@ class DriveModel
             $response[$i]["mime"] = $row["mime"];
             $response[$i]["owner"] = $row["first_name"];
             $response[$i]["parent_id"] = $row["parent_id"];
-            $response[$i]["parent_name"] = !empty($row["parent_name"]) ? $row["parent_name"] : "Home";
+            $response[$i]["parent_name"] = !empty($row["parent_name"]) ? $row["parent_name"] : "Root";
             $response[$i]["updated_at"] = date("jS M Y", strtotime($row["updated_at"]));
             $response[$i]["created_at"] = date("jS M Y", strtotime($row["created_at"]));
-            $response[$i]["hash"] = trim(base64_encode(str_pad($row["id"].'|', 10, 'padding')), "=");
+            $response[$i]["hash"] = trim(base64_encode(str_pad($row["id"] . '|', 10, 'padding')), "=");
         }
 
 

@@ -28,12 +28,14 @@
   <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 
+  </script>
+
 
 
 </head>
 
 <body>
-  <div class="container-fluid px-0 py-0" id="apps">
+  <div class="container-fluid px-0 py-0" id="file_app">
 
     <div class="row g-0">
       <nav id="sidebarMenu" class="d-none d-lg-block col-lg-2  my-sidebar collapse bg-light border-end">

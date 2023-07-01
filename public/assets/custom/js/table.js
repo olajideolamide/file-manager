@@ -28,18 +28,18 @@ function refetchData() {
 function refetchPath() {
 
     var data = {};
-    if (app.parent == "") {
-        app.breadcrumb = [];
+    if (file_app.parent == "") {
+        file_app.breadcrumb = [];
         return;
     }
-    request("/api/drive/path/" + app.parent, data, "get", "handle_path");
+    request("/api/drive/path/" + file_app.parent, data, "get", "handle_path");
 }
 
 
 //initialize the table and load the default view
 $(function () {
 
-    if (typeof folder_id !== 'undefined' && folder_id !== null) app.parent = folder_id;
+    if (typeof folder_id !== 'undefined' && folder_id !== null) file_app.parent = folder_id;
     refetchData();
 })
 
@@ -50,24 +50,24 @@ function getOptions() {
 
     return {
         "filter": JSON.stringify(TABLE_FILTERS),
-        "search": app.search_term,
-        "sort": app.sort_column,
-        "dir": app.sort_dir,
-        "parent": app.parent
+        "search": file_app.search_term,
+        "sort": file_app.sort_column,
+        "dir": file_app.sort_dir,
+        "parent": file_app.parent
     };
 }
 
 
 function clearOptions() {
-    app.search_term = "";
-    app.sort_column = "";
-    app.sort_dir = "";
+    file_app.search_term = "";
+    file_app.sort_column = "";
+    file_app.sort_dir = "";
     $(".search.form-control").val("");
 
 }
 
 function populateModalFormOptions(data) {
-    data["parent"] = app.parent;
+    data["parent"] = file_app.parent;
     return data;
 }
 
@@ -81,7 +81,7 @@ $(function () {
     //double click a folder in the table view
     $('body').on('dblclick', 'table.custom tbody tr, .grid-view .card', function (e) {
 
-        var item = app.getItemFromFiles($(this).data("id"));
+        var item = file_app.getItemFromFiles($(this).data("id"));
 
 
         if (item["type"] == "FOLDER") {
@@ -103,12 +103,6 @@ $(function () {
 
 
 
-    $('body').on('click', '.create-folder-btn', function (e) {
-        showModal("small-modal", "New Folder", getCreateFolderModalContent(), "Create");
-    });
-
-
-
 
     //bulk options click
     $('body').on('click', '.bulk-option.move', function (e) {
@@ -126,10 +120,10 @@ window.onpopstate = function (e) {
         console.log(e.state);
 
 
-        app.search_term = e.state.search;
-        app.sort_column = e.state.sort;
-        app.sort_dir = e.state.dir;
-        app.parent = e.state.parent;
+        file_app.search_term = e.state.search;
+        file_app.sort_column = e.state.sort;
+        file_app.sort_dir = e.state.dir;
+        file_app.parent = e.state.parent;
         PUSH_STATE = false;
         refetchData();
 
@@ -137,72 +131,70 @@ window.onpopstate = function (e) {
 };
 
 function updateParent(parent) {
-    app.parent = parent;
+    file_app.parent = parent;
     refetchData();
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
 //column sort
 function sortCustomTable(column, direction) {
-    app.sort_column = column;
-    app.sort_dir = direction;
+    file_app.sort_column = column;
+    file_app.sort_dir = direction;
 
     refetchData();
 }
 
 
-function refreshFolders(data) {
-    app.folders = {};
-    let this_parent;
-    $.each(data, function (key, item) {
-        app.folders[item["id"]] = item;
+function refreshFolders() {
 
-        //if this folder belongs to this parent and it is not in view, add
-        this_parent = app.parent;
-        if (!this_parent) this_parent = null;
-
-        if (item["parent_id"] == this_parent && !app.getItemFromFiles(item["id"])) {
-            insertFileFolder(0, item);
-        }
-
-    });
-
+    var data = {"parent": file_app.parent};
+    request("/api/drive/folders", data, "get", "populate_folders");
 
 }
 
 
+var populate_folders = function (data, status_text) {
+
+    if (status_text) {
+        return;
+    }
+
+    let this_parent;
+    $.each(data, function (key, item) {
+
+        //if this folder belongs to this parent and it is not in view, add
+        this_parent = file_app.parent;
+        if (!this_parent) this_parent = null;
+
+        if (item["parent_id"] == this_parent && !file_app.getItemFromFiles(item["id"])) {
+            insertFileFolder(0, item, true);
+        }
+
+    });
+};
+
+
+
 var refresh_table = function (data, status_text) {
 
-    app.files = [];
+    file_app.files = [];
 
     if (status_text) {
         //we show error
         return;
     }
 
-    $.each(data.data, function (key, item) {
+    $.each(data, function (key, item) {
         insertFileFolder(key, item);
     });
 
     let url_path;
     if (PUSH_STATE == true) {
-        if (app.parent == "") {
+        if (file_app.parent == "") {
             url_path = "/drive";
         } else {
-            url_path = "/drive/" + btoa(app.parent.toString().padEnd(10, "padding")).replace(/=+/, "");
+            url_path = "/drive/" + btoa(file_app.parent.toString().padEnd(10, "padding")).replace(/=+/, "");
         }
         window.history.pushState(getOptions(), "", url_path);
     } else {
@@ -219,9 +211,9 @@ var handle_path = function (data, status_text) {
         return;
     }
 
-    app.breadcrumb = [];
-    $.each(data.data, function (key, item) {
-        app.breadcrumb.push({
+    file_app.breadcrumb = [];
+    $.each(data, function (key, item) {
+        file_app.breadcrumb.push({
             "id": item.id,
             "name": item.name
         });
@@ -234,12 +226,12 @@ var handle_path = function (data, status_text) {
 
 
 function insertFileFolder(key, item, prepend = false) {
-    let this_parent = app.parent;
+    let this_parent = file_app.parent;
     if (!this_parent) this_parent = null;
     if (item["parent_id"] != this_parent) return;
 
-    if (prepend == true) app.files.unshift(item);
-    else app.files.push(item);
+    if (prepend == true) file_app.files.unshift(item);
+    else file_app.files.push(item);
 
 }
 

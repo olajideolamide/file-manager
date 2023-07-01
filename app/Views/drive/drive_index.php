@@ -44,25 +44,27 @@
 
 
                             <li class="breadcrumb-item breadcrumb-clickable active" aria-current="page" v-bind:data-id="root_breadcrumb.id">
-                                <a href="#">{{root_breadcrumb.name}} </a>
+                                <span v-if="visible_breadcrumb.length > 0" class="link-primary pointer">{{root_breadcrumb.name | truncate(15)}} </span>
+                                <span v-else>{{root_breadcrumb.name | truncate(15)}} </span>
                             </li>
 
 
                             <li v-if="dropdown_breadcrumb.length > 0" class="breadcrumb-item">
                                 <div class="btn-group p-0" role="group">
-                                    <a class="dropdown-item" href="#" class="dropdown-toggle no-icon p-0" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="dropdown-item"  class="pointer dropdown-toggle no-icon p-0" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="fa-solid fa-ellipsis"></i>
-                                    </a>
+                                    </span>
                                     <ul class="dropdown-menu">
                                         <li v-for="bread2 in dropdown_breadcrumb" class="breadcrumb-clickable" aria-current="page" v-bind:data-id="bread2.id">
-                                            <a class="dropdown-item" href="#"><i class="fa-solid fa-folder"></i> {{bread2.name}} </a>
+                                            <span class="dropdown-item" class="pointer"><i class="fa-solid fa-folder"></i> {{bread2.name | truncate(15)}} </span>
                                         </li>
                                     </ul>
                                 </div>
                             </li>
 
                             <li v-for="(bread, index) in visible_breadcrumb" class="breadcrumb-item breadcrumb-clickable active" aria-current="page" v-bind:data-id="bread.id">
-                                <a href="#">{{bread.name}} </a>
+                                <span v-if="index < (visible_breadcrumb.length-1)" class="link-primary pointer">{{bread.name | truncate(15)}} </span>
+                                <span v-else>{{bread.name | truncate(15)}} </span>
                             </li>
 
 
@@ -80,7 +82,7 @@
                         <ul class="dropdown-menu">
                             <li><a id="upload-files" class="dropdown-item" href="#"><span data-feather="file" class="align-text-bottom"></span> Upload files</a></li>
                             <li><a id="upload-folder" class="dropdown-item" href="#"><span data-feather="folder" class="align-text-bottom"></span> Upload Folder</a></li>
-                            <li><a class="dropdown-item create-folder-btn" href="#"><span data-feather="folder-plus" class="align-text-bottom "></span> Create Folder</a></li>
+                            <li><a onclick="SYSTEM.showModal('', 'New Folder', '/api/modal/drive/new-folder');" class="dropdown-item create-folder-btn" href="#"><span data-feather="folder-plus" class="align-text-bottom "></span> Create Folder</a></li>
                         </ul>
                     </div>
 
@@ -203,11 +205,10 @@
                                                     <td class="d-flex ps-3">
                                                         <div v-bind:data-file-id="file.id" v-on:click="populateInfoPane" class="d-flex align-items-center flex-grow-1">
                                                             <img v-if="file.file_type == 'photo'" v-bind:src="file.thumb_url" width="30" height="30" class="me-3" v-bind:data-file-id="file.id" />
+                                                            <small-folder v-else-if="file.type == 'FOLDER'" v-bind:id="file.id" v-on:click="populateInfoPane"></small-folder>
+                                                            <small-icon v-else v-bind:text="file.extension" v-bind:id="file.id" v-on:click="populateInfoPane"></small-icon>
 
-                                                            <img v-else src="/assets/custom/images/icons/untitled.svg" width="30" height="30" class="me-3" />
 
-
-                                                            <!--<i v-else v-bind:class="[ file.icon, 'fa-solid', 'pe-3', 'fa-2x' ]" v-bind:data-file-id="file.id"></i>-->
 
                                                             <div class="file-name text-truncate" v-bind:data-file-id="file.id">
                                                                 {{ file.name }}
@@ -254,12 +255,9 @@
                                     <div class="card" v-bind:data-file-id="file.id" v-bind:data-id="file.id">
                                         <div class="img-container" style="height: 90%" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
                                             <input class="form-check-input" type="checkbox" v-model="selected" :value="file.id">
-                                            <img v-if="file.file_type == 'photo'" v-bind:src="file.thumb_url" style="width: auto; max-width: 100%; object-fit: cover;" class="card-img-top border-0" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
-
-                                            <img v-else src="/assets/custom/images/icons/file.svg" style="width: auto; max-width: 100%; object-fit: cover;" class="card-img-top border-0" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
-
-
-                                            <!--<i v-else class="card-img-top fa-solid fa-8x mt-4 mb-2" :class="file.icon" v-bind:data-file-id="file.id" v-on:click="populateInfoPane"></i>-->
+                                            <img v-if="file.file_type == 'photo'" v-bind:src="file.thumb_url" style="width: auto; max-width: 100%; object-fit: cover;" class="card-img-top border-0" v-bind:data-file-id="file.id" v-on:click="populateInfoPane" />
+                                            <large-folder v-else-if="file.type == 'FOLDER'" v-bind:id="file.id" v-on:click="populateInfoPane"></large-folder>
+                                            <large-icon v-else v-bind:text="file.extension" v-bind:id="file.id" v-on:click="populateInfoPane"></large-icon>
                                         </div>
                                         <div class="card-body" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
                                             <div class="card-text d-flex justify-content-between">
@@ -301,6 +299,9 @@
 </div>
 
 
+
+
+
 <div class="offcanvas offcanvas-lg offcanvas-start" data-bs-backdrop="true" data-bs-scroll="true" tabindex="-1" id="offcanvasResponsive2" aria-labelledby="offcanvasResponsive2Label">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title text-secondary" id="offcanvasResponsive2Label">Menu</h5>
@@ -324,3 +325,5 @@
 </div>
 
 
+<input id="file-input" class="d-none" type="file" name="name[]" multiple />
+<input id="folder-input" class="d-none" type="file" webkitdirectory mozdirectory />
