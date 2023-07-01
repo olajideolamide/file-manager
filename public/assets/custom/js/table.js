@@ -115,11 +115,6 @@ $(function () {
 
 window.onpopstate = function (e) {
     if (e.state) {
-        //document.getElementById("content").innerHTML = e.state.html;
-        //document.title = e.state.pageTitle;
-        console.log(e.state);
-
-
         file_app.search_term = e.state.search;
         file_app.sort_column = e.state.sort;
         file_app.sort_dir = e.state.dir;
@@ -148,7 +143,9 @@ function sortCustomTable(column, direction) {
 
 function refreshFolders() {
 
-    var data = {"parent": file_app.parent};
+    var data = {
+        "parent": file_app.parent
+    };
     request("/api/drive/folders", data, "get", "populate_folders");
 
 }
@@ -230,8 +227,12 @@ function insertFileFolder(key, item, prepend = false) {
     if (!this_parent) this_parent = null;
     if (item["parent_id"] != this_parent) return;
 
+    //first delete this id if it exists
+    file_app.removeItemFromFiles(item.id);
+
     if (prepend == true) file_app.files.unshift(item);
     else file_app.files.push(item);
+
 
 }
 

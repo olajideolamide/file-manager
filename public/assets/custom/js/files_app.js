@@ -215,6 +215,9 @@ var file_app = new Vue({
                 return obj.id == id
             })[0]
         },
+        removeItemFromFiles(id) {
+            this.files = this.files.filter(item => item.id !== id);
+        },
         truncateThis: function (str, n) {
             return (str.length > n) ? str.slice(0, n - 1) + "..." : str;
         },
@@ -242,7 +245,6 @@ var file_app = new Vue({
             this.selected = [];
         },
         populateInfoPane(event) {
-            console.log(event);
             this.clearAllSelected();
             this.all_selected = false;
             this.current_info_item = event.target.dataset.fileId;
