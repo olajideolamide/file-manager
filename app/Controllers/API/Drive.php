@@ -50,6 +50,22 @@ class Drive extends APIController
     }
 
 
+
+    /**
+     * move items to a destination
+     */
+    public function move()
+    {
+        //$drive_model = model('DriveModel', true, $this->db);
+        //$response = $drive_model->path($file_id);
+
+        $ids = $this->request->getPost("ids");
+        $destination_id = $this->request->getPost("destination_id");
+
+        return $this->respond("", 200);;
+    }
+
+
     public function createFolder()
     {
 

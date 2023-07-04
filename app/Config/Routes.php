@@ -56,6 +56,7 @@ $routes->group('api', static function ($routes) {
     $routes->match(['post'], 'drive/folder', 'API\Drive::createFolder'); //create folder
     $routes->match(['get'], 'drive/folders', 'API\Drive::folders'); //grab all folders for this parent
     $routes->match(['get'], 'drive/path/(:num)', 'API\Drive::path/$1'); //get path
+    $routes->match(['post'], 'drive/move', 'API\Drive::move'); //move items to a destination
 
     $routes->match(['get'], 'photo/thumb/(:num)', 'API\Photo::thumb/$1'); //get thumb
     $routes->match(['get'], 'photo/resize/(:segment)/(:num)', 'API\Photo::resize/$1/$2'); //resize a photo
@@ -65,6 +66,7 @@ $routes->group('api', static function ($routes) {
 
 $routes->group('api/modal', static function ($routes) {
     $routes->match(['get'], 'drive/new-folder', 'API\Modal\Drive::newFolder');
+    $routes->match(['get'], 'drive/move/(:segment)', 'API\Modal\Drive::move/$1');
 });
 
 
