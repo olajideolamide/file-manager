@@ -6,44 +6,48 @@
             <img src="/assets/custom/images/icon-new-md.png" width="70" />
         </div>
 
-        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
-            <span>Quick Links</span>
 
-        </h6>
-        <ul class="nav flex-column mb-2">
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="fa-solid fa-ellipsis-vertical"></i>
+        <ul class="nav flex-column mt-4 mb-2">
+            <li class="nav-item mb-2">
+                <a class="nav-link link-primary" href="#">
+                    <div class="d-inline-block" style="width:25px; height: 15px"><i class="fa-solid fa-database me-2 "></i></div>
+
+
                     All files
                 </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item mb-2">
                 <a class="nav-link" href="#">
-                    <span data-feather="clock" class="align-text-bottom"></span>
+                    <div class="d-inline-block" style="width:25px; height: 15px"><i class="fa-solid fa-clock me-2"></i></div>
+
                     Recent
                 </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item mb-2">
                 <a class="nav-link" href="#">
-                    <span data-feather="star" class="align-text-bottom"></span>
+                    <div class="d-inline-block" style="width:25px; height: 15px"> <i class="fa-solid fa-star me-2"></i></div>
+
                     Starred
                 </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item mb-2">
                 <a class="nav-link" href="#">
-                    <span data-feather="users" class="align-text-bottom"></span>
+                    <div class="d-inline-block" style="width:25px; height: 15px"> <i class="fa-solid fa-share-nodes me-2"></i></div>
+
                     Shared with me
                 </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item mb-2">
                 <a class="nav-link" href="#">
-                    <span data-feather="tag" class="align-text-bottom"></span>
+                    <div class="d-inline-block" style="width:25px; height: 15px"> <i class="fa-solid fa-tags me-2"></i></div>
+
                     Tags
                 </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item mb-2">
                 <a class="nav-link" href="#">
-                    <span data-feather="trash-2" class="align-text-bottom"></span>
+                    <div class="d-inline-block" style="width:25px; height: 15px"> <i class="fa-solid fa-trash me-2"></i></div>
+
                     Trash
                 </a>
             </li>

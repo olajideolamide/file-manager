@@ -50,6 +50,22 @@ class Drive extends APIController
     }
 
 
+
+    /**
+     * move items to a destination
+     */
+    public function move()
+    {
+        //$drive_model = model('DriveModel', true, $this->db);
+        //$response = $drive_model->path($file_id);
+
+        $ids = $this->request->getPost("ids");
+        $destination_id = $this->request->getPost("destination_id");
+
+        return $this->respond("", 200);;
+    }
+
+
     public function createFolder()
     {
 
@@ -62,7 +78,7 @@ class Drive extends APIController
         }
 
         $file_data = array();
-        $file_data["name"] = $this->request->getPost('name');
+        $file_data["name"] = trim($this->request->getPost('name'));
         $file_data["type"] = "FOLDER";
         $file_data["created_at"] = date("Y-m-d H:i:s");
         $file_data["updated_at"] = date("Y-m-d H:i:s");

@@ -44,14 +44,14 @@
 
 
                             <li class="breadcrumb-item breadcrumb-clickable active" aria-current="page" v-bind:data-id="root_breadcrumb.id">
-                                <span v-if="visible_breadcrumb.length > 0" class="link-primary pointer">{{root_breadcrumb.name | truncate(15)}} </span>
-                                <span v-else>{{root_breadcrumb.name | truncate(15)}} </span>
+                                <span v-if="visible_breadcrumb.length > 0" class="link-primary pointer"><i class="fa-sharp fa-solid fa-house"></i> </span>
+
                             </li>
 
 
                             <li v-if="dropdown_breadcrumb.length > 0" class="breadcrumb-item">
                                 <div class="btn-group p-0" role="group">
-                                    <span class="dropdown-item"  class="pointer dropdown-toggle no-icon p-0" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="dropdown-item" class="pointer dropdown-toggle no-icon p-0" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="fa-solid fa-ellipsis"></i>
                                     </span>
                                     <ul class="dropdown-menu">
@@ -82,7 +82,7 @@
                         <ul class="dropdown-menu">
                             <li><a id="upload-files" class="dropdown-item" href="#"><span data-feather="file" class="align-text-bottom"></span> Upload files</a></li>
                             <li><a id="upload-folder" class="dropdown-item" href="#"><span data-feather="folder" class="align-text-bottom"></span> Upload Folder</a></li>
-                            <li><a onclick="SYSTEM.showModal('', 'New Folder', '/api/modal/drive/new-folder');" class="dropdown-item create-folder-btn" href="#"><span data-feather="folder-plus" class="align-text-bottom "></span> Create Folder</a></li>
+                            <li><a onclick="SYSTEM.showModal('', '/api/modal/drive/new-folder');" class="dropdown-item create-folder-btn" href="#"><span data-feather="folder-plus" class="align-text-bottom "></span> Create Folder</a></li>
                         </ul>
                     </div>
 
@@ -99,10 +99,10 @@
                             <span data-feather="menu" class="align-text-bottom"></span> Options
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Move to</a></li>
-                            <li><a class="dropdown-item" href="#">Download</a></li>
-                            <li><a class="dropdown-item" href="#">Add to Starred</a></li>
-                            <li><a class="dropdown-item" href="#">Trash</a></li>
+                            <li><span class="dropdown-item bulk-option move pointer">Move to</span></li>
+                            <li><span class="dropdown-item pointer">Download</span></li>
+                            <li><span class="dropdown-item pointer">Add to Starred</span></li>
+                            <li><span class="dropdown-item pointer">Trash</span></li>
                         </ul>
                     </div>
 

@@ -5,22 +5,28 @@ var SYSTEM = new Vue({
         toast_message: "",
         modal_size_class: "modal-sm",
         modal_title: "",
-        modal_has_content: false
+        modal_has_content: false,
+        child_modal_has_content: false
 
     },
     computed: {},
     watch: {},
     methods: {
-        showModal(size_class, title, url) {
+        showModal(size_class, url) {
             this.modal_size_class = size_class;
-            this.modal_title = title;
             this.modal_has_content = false;
             $("#modal .content").html("");
             MODAL.show();
             var data = {};
             request(url, data, "get", "process_modal_ui_response");
         },
-        showToast(msg, this_size_class){
+        showChildModal(url, data) {
+            this.child_modal_has_content = false;
+            $("#child-modal .content").html("");
+            CHILD_MODAL.show();
+            request(url, data, "get", "process_child_modal_ui_response");
+        },
+        showToast(msg, this_size_class) {
 
             this.toast_class = this_size_class;
             this.toast_message = msg;
@@ -36,6 +42,59 @@ feather.replace();
 let MODAL = new bootstrap.Modal("#modal", {
     backdrop: 'static'
 });
+
+let CHILD_MODAL = new bootstrap.Modal("#child-modal", {
+    backdrop: 'static'
+});
+
+const chid_modal_el = document.getElementById('child-modal')
+chid_modal_el.addEventListener('show.bs.modal', event => {
+    $("#modal").css("z-index", 2);
+
+});
+
+chid_modal_el.addEventListener('hidden.bs.modal', event => {
+    $("#modal").css("z-index", 1055);
+
+});
+
+
+
+
+
+var process_modal_ui_response = function (data, status_text) {
+
+    if (status_text) {
+        MODAL.hide();
+        SYSTEM.toast_message = "status_text";
+        return;
+    }
+
+    SYSTEM.modal_has_content = true;
+
+
+    $("#modal .content").html(data["data"]);
+
+};
+
+
+var process_child_modal_ui_response = function (data, status_text) {
+
+    if (status_text) {
+        CHILD_MODAL.hide();
+        SYSTEM.toast_message = "status_text";
+        return;
+    }
+
+    SYSTEM.child_modal_has_content = true;
+
+
+    $("#child-modal .content").html(data["data"]);
+
+};
+
+
+
 
 
 
