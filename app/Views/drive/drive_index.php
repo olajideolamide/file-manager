@@ -252,9 +252,10 @@
 
                             <div class="row g-3 mt-1 grid-container">
                                 <div v-for="(file,index) of files" :key="file.id" v-bind:data-id="file.id" class="col-6 col-sm-4 col-md-3">
-                                    <div class="card" v-bind:data-file-id="file.id" v-bind:data-id="file.id">
+                                    <div class="card" v-bind:data-file-id="file.id" v-bind:data-id="file.id" style="box-shadow: 0px 8px 15px -3px rgba(0,0,0,0.1);">
+                                    <input class="form-check-input" type="checkbox" v-model="selected" :value="file.id">
                                         <div class="img-container" style="height: 90%" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
-                                            <input class="form-check-input" type="checkbox" v-model="selected" :value="file.id">
+
                                             <img v-if="file.file_type == 'photo'" v-bind:src="file.thumb_url" style="width: auto; max-width: 100%; object-fit: cover;" class="card-img-top border-0" v-bind:data-file-id="file.id" v-on:click="populateInfoPane" />
                                             <large-folder v-else-if="file.type == 'FOLDER'" v-bind:id="file.id" v-on:click="populateInfoPane"></large-folder>
                                             <large-icon v-else v-bind:text="file.extension" v-bind:id="file.id" v-on:click="populateInfoPane"></large-icon>
