@@ -78,7 +78,7 @@ class Drive extends APIController
         }
 
         $file_data = array();
-        $file_data["name"] = $this->request->getPost('name');
+        $file_data["name"] = trim($this->request->getPost('name'));
         $file_data["type"] = "FOLDER";
         $file_data["created_at"] = date("Y-m-d H:i:s");
         $file_data["updated_at"] = date("Y-m-d H:i:s");

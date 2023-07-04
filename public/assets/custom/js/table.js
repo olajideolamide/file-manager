@@ -15,6 +15,17 @@ var TABLE_FILTERS = {};
 var PUSH_STATE = true;
 
 
+
+
+//initialize the table and load the default view
+$(function () {
+    //SYSTEM.showModal('', '/api/modal/drive/move/67');
+
+    if (typeof folder_id !== 'undefined' && folder_id !== null) file_app.parent = folder_id;
+    refetchData();
+})
+
+
 /**
  * refetches the table data from the server
  */
@@ -34,15 +45,6 @@ function refetchPath() {
     }
     request("/api/drive/path/" + file_app.parent, data, "get", "handle_path");
 }
-
-
-//initialize the table and load the default view
-$(function () {
-
-    if (typeof folder_id !== 'undefined' && folder_id !== null) file_app.parent = folder_id;
-    refetchData();
-})
-
 
 
 //table options
@@ -96,7 +98,6 @@ $(function () {
 
     //click on a breadcrumb item
     $('body').on('click', '.breadcrumb-clickable', function (e) {
-
         clearOptions();
         updateParent($(this).data("id"));
     });
@@ -106,7 +107,9 @@ $(function () {
 
     //bulk options click
     $('body').on('click', '.bulk-option.move', function (e) {
-        showModal("large-modal", "Move Item(s)", move_modal_content, "Create");
+        //grab all selected
+        if (file_app.selected.length < 1) return;
+        SYSTEM.showModal('', '/api/modal/drive/move/' + file_app.selected.join(","));
     });
 
 

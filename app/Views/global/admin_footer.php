@@ -13,7 +13,6 @@
     <div class="file-upload-toast toast-container position-fixed bottom-0 end-0 p-3">
         <div id="queue-toast" class="toast fase text-bg-light" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
-
                 <strong class="me-auto queue-stats"></strong>
 
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -26,25 +25,37 @@
     </div>
 
     <div id="modal" class="modal fade" v-bind:class="[modal_size_class]" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header border-bottom p-4">
-                    <div class="modal-title fw-bold" id="staticBackdropLabel">{{modal_title}}</div>
-                    <button type="button" class="btn-close p-1" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="py-2">
-                        <div class="content">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="content">
 
-                        </div>
-                        <div v-if="!modal_has_content" class="d-flex justify-content-center py-5">
-                            <div class="spinner-border" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </div>
+            </div>
+
+            <div v-if="!modal_has_content" class="modal-content ">
+                <div class="d-flex justify-content-center py-5">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
+            </div>
 
+
+
+        </div>
+    </div>
+
+
+
+    <div id="child-modal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="child-modal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="content">
+
+            </div>
+            <div v-if="!child_modal_has_content" class="modal-content ">
+                <div class="d-flex justify-content-center py-5">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

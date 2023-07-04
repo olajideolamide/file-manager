@@ -19,11 +19,14 @@
 
 
 <script>
+  var callback = "<?php echo $callback; ?>";
   $(".modal-form").submit(function(e) {
     e.preventDefault();
     var data = objectifyForm($(".modal-form").serializeArray());
 
-    data = populateModalFormOptions(data);
+    data["parent"] = "<?php echo $parent; ?>";
+
+    var fn = window["move_modal_handle_new_folder"];
 
     request("/api/drive/folder", data, "post", "create_folder_callback");
 
@@ -38,8 +41,9 @@
     //insert the folder into the tree
     $.each(data.data, function(key, item) {
       insertFileFolder(key, item, true);
+      window[callback](item.id);
     });
-    MODAL.hide();
+    CHILD_MODAL.hide();
     refreshFolders(data.folders);
     SYSTEM.showToast("Folder Created", "text-bg-success");
   }
