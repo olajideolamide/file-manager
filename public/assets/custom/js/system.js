@@ -183,3 +183,15 @@ function isTouchDevice() {
         (navigator.maxTouchPoints > 0) ||
         (navigator.msMaxTouchPoints > 0));
 }
+
+
+function toggleLoadingButton(btnClass, action) {
+
+    if (action == "show") {
+        $(btnClass + " .spinner").removeClass("d-none");
+        $(btnClass).addClass("disabled");
+    } else {
+        $(btnClass + " .spinner").addClass("d-none");
+        $(btnClass).removeClass("disabled");
+    }
+}

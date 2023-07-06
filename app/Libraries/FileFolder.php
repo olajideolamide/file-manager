@@ -31,7 +31,7 @@ class FileFolder
     private $children;
 
     private $drive_model;
-    private $last_error;
+    private $error;
     private $storage_id;
     public $storage;
 
@@ -45,8 +45,10 @@ class FileFolder
 
         $entry = $this->drive_model->getFile($this->id);
 
-        $this->initializeFields($entry);
-        $this->initializeStorage();
+        $response = $this->initializeFields($entry);
+        if ($response == true) {
+            $this->initializeStorage();
+        }
     }
 
 
@@ -59,6 +61,10 @@ class FileFolder
      */
     public function initializeFields($entries): bool
     {
+        if (count($entries) < 1) {
+            $this->error = "Invalid file or folder";
+            return false;
+        }
         foreach ($entries as $entry); {
             $this->name = $entry["name"];
             $this->file_name = $entry["file_name"];
@@ -140,7 +146,7 @@ class FileFolder
 
     public function getPath(): array
     {
-        return array();
+        return $this->drive_model->path($this->id);
     }
 
     public function getChildren(): array
@@ -157,6 +163,35 @@ class FileFolder
      */
     public function move($destination_id): bool
     {
+
+        //make sure the destination is a folder
+        if (!empty($destination_id)) {
+            $destination_folder = new FileFolder($destination_id);
+
+            if ($destination_folder->getField("type") != "FOLDER") {
+                $this->error = "Destination must be a folder";
+                return false;
+            }
+
+            //if current parent is destination, skip
+            if ($this->parent_id == $destination_folder->getField("id")) return true;
+
+            //make sure that the destination is not a child
+            $destination_path = $destination_folder->getPath();
+
+            foreach ($destination_path as $path) {
+                if ($path["id"] == $this->id) {
+                    $this->error = "Cannot move item into one of it's children";
+                    return false;
+                }
+            }
+        }else{
+            $destination_id = null;
+        }
+
+        //move
+        $this->drive_model->update($this->id, ["parent_id" => $destination_id]);
+
         return true;
     }
 
@@ -200,5 +235,13 @@ class FileFolder
 
     public function annotations()
     {
+    }
+
+    public function getLastError()
+    {
+        $error = $this->error;
+        $this->error = null;
+
+        return $error;
     }
 }

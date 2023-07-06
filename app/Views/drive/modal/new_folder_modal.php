@@ -12,15 +12,21 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
-      <button type="submit" class="btn btn-sm btn-primary submit-btn" v-bind:class="move_btn_class">Create</button>
+      <button type="submit" class="btn btn-sm btn-primary submit-btn">
+        <span class="spinner spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+        Submit
+      </button>
     </div>
   </div>
 </form>
 
 
 <script>
+
+
   $(".modal-form").submit(function(e) {
     e.preventDefault();
+    toggleLoadingButton("#modal .submit-btn", "show");
     var data = objectifyForm($(".modal-form").serializeArray());
 
     data = populateModalFormOptions(data);
@@ -31,6 +37,7 @@
 
   var create_folder_callback = function(data, status_text) {
     if (status_text) {
+      toggleLoadingButton("#modal .submit-btn", "hide");
       SYSTEM.showToast(jQuery.parseJSON(status_text).messages.error, "text-bg-danger");
       return;
     }

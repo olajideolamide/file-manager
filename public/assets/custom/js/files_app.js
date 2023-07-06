@@ -217,6 +217,7 @@ var file_app = new Vue({
             })[0]
         },
         removeItemFromFiles(id) {
+
             this.files = this.files.filter(item => item.id !== id);
         },
         truncateThis: function (str, n) {

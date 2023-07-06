@@ -37,7 +37,7 @@ class DriveModel
         return $this->db->insertID();
     }
 
-    public function path($id)
+    public function path($id): array
     {
         $path = array();
         $parent_id = $id;
@@ -118,10 +118,10 @@ class DriveModel
         $query_filters = array();
         $sql = "SELECT file.*, user.first_name FROM file LEFT JOIN user ON file.user_id = user.id WHERE file.type = 'FOLDER'";
 
-        if(!empty($options["parent"])){
+        if (!empty($options["parent"])) {
             $sql .= " AND file.parent_id = ?";
             $query_filters[] = $options["parent"];
-        }else{
+        } else {
             $sql .= " AND file.parent_id IS NULL";
         }
 

@@ -103,7 +103,10 @@
 
   <div class="modal-footer">
     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
-    <button type="submit" class="btn btn-sm btn-primary submit-btn" v-bind:class="move_btn_class" v-on:click="moveItems">Move here</button>
+    <button type="submit" class="btn btn-sm btn-primary submit-btn" v-bind:class="move_btn_class" v-on:click="moveItems">
+      <span class="spinner spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+      Move here
+    </button>
   </div>
 </div>
 
@@ -178,7 +181,8 @@
         var data = {
           "ids": MOVE_MODAL.items,
           "destination_id": MOVE_MODAL.parent
-        }
+        };
+        toggleLoadingButton("#modal .submit-btn", "show");
         request("/api/drive/move", data, "post", "move_modal_post_move_reponse");
       },
       showDialog() {
@@ -195,18 +199,22 @@
 
 
   function move_modal_handle_new_folder(parent_id) {
-    console.log(parent_id);
     MOVE_MODAL.parent = parent_id;
   }
 
   var move_modal_post_move_reponse = function(data = null, status_text) {
     if (status_text) {
+      toggleLoadingButton("#modal .submit-btn", "hide");
       SYSTEM.showToast(jQuery.parseJSON(status_text).messages.error, "text-bg-danger");
       return;
     }
 
-    MODAL.hide();
     refetchData();
+    //for (item of MOVE_MODAL.items) {
+      //console.log(item);
+      //file_app.removeItemFromFiles(item);
+    //}
+    MODAL.hide();
     SYSTEM.showToast("Items have been moved", "text-bg-success");
   };
 

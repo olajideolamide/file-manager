@@ -60,13 +60,28 @@ class Drive extends APIController
      */
     public function move()
     {
-        //$drive_model = model('DriveModel', true, $this->db);
-        //$response = $drive_model->path($file_id);
 
         $ids = $this->request->getPost("ids");
         $destination_id = $this->request->getPost("destination_id");
 
+        //TODO limit ids to 50 at a time.
+        $file_folder = null;
+        foreach ($ids as $id) {
+            $file_folder = new FileFolder($id);
+            $response = $file_folder->move($destination_id);
+
+            if ($response == false) {
+                return $this->fail($file_folder->getLastError(), 400);
+            }
+        }
+
+
         return $this->respond("", 200);
+    }
+
+
+    public function download(){
+        $ids = $this->request->getPost("ids");
     }
 
 
