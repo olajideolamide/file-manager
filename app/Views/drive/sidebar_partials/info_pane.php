@@ -86,7 +86,7 @@
                 <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
                     <div class="accordion-body p-3 py-4">
                         <label for="inputPassword5" class="form-label">Tags</label>
-                        <input type="text" class="form-control form-control-sm" aria-labelledby="passwordHelpBlock">
+                        <input name="tag_input" type="text" class="form-control form-control-sm" aria-labelledby="passwordHelpBlock">
                         <div class="tags mt-3">
                             <span class="badge fw-light bg-lighter text-black-50 fs-7 mb-1">#zip <i class="fa-solid fa-circle-xmark ms-2"></i></span>
                             <span class="badge fw-light bg-lighter text-black-50 fs-7 mb-1">#music <i class="fa-solid fa-circle-xmark ms-2"></i></span>

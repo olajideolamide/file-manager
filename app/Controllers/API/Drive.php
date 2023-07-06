@@ -2,11 +2,15 @@
 
 namespace App\Controllers\API;
 
+
+
 use App\Controllers\APIController;
+use App\Libraries\FileFolder;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\UnableToWriteFile;
+
 
 
 class Drive extends APIController
@@ -62,7 +66,7 @@ class Drive extends APIController
         $ids = $this->request->getPost("ids");
         $destination_id = $this->request->getPost("destination_id");
 
-        return $this->respond("", 200);;
+        return $this->respond("", 200);
     }
 
 
@@ -93,8 +97,6 @@ class Drive extends APIController
 
         $response = array("status" => "complete", "data" => $folder_data);
 
-        //$response["folders"] = $drive_model->getFolders(session()->get('id'), true);
-
         return $this->respondCreated($response);
     }
 
@@ -115,7 +117,7 @@ class Drive extends APIController
 
             $parent = $this->request->getPost('parent');
 
-            $drive_model = new \App\Models\DriveModel($this->db);
+            $drive_model = model('DriveModel', true, $this->db);
 
             if (count($path_array) >= 2) {
                 //this is a path,
@@ -129,12 +131,14 @@ class Drive extends APIController
 
             $id = null;
 
+            $name = bin2hex(random_bytes(4)) . "-" . bin2hex(random_bytes(2)) . "-" . bin2hex(random_bytes(2)) . "-" . bin2hex(random_bytes(4));
+
             if (empty($file)) {
 
                 //create it
                 $file_data = array();
                 $file_data["name"] = $path_array[count($path_array) - 1];
-                $file_data["file_name"] = bin2hex(random_bytes(4)) . "-" . bin2hex(random_bytes(2)) . "-" . bin2hex(random_bytes(2)) . "-" . bin2hex(random_bytes(4));
+                $file_data["file_name"] = $name;
                 $file_data["mime"] = $this->request->getPost('mime');
                 $file_data["type"] = $this->request->getPost('type');
                 $file_data["size"] = $this->request->getPost('size');
@@ -142,17 +146,20 @@ class Drive extends APIController
                 $file_data["updated_at"] = date("Y-m-d H:i:s");
                 $file_data["user_id"] =  session()->get('id');
                 $file_data["extension"] =  pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
-                if (!empty($parent)) $file_data["parent_id"] =  $parent;
+                $file_data["extension"] =  pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
 
+                //default storage
+                $file_data["storage_id"] = model('StorageModel', true, $this->db)->getDefaultStorage()["id"];
+
+                if (!empty($parent)) $file_data["parent_id"] =  $parent;
                 $id = $drive_model->create($file_data);
             } else {
                 //TODO if no versioning (like as it is today), delete the old entry from storage and update the DB
                 //TODO add the new entry
                 //update it,
-
                 $file_data = array();
                 $file_data["name"] = $path_array[count($path_array) - 1];
-                $file_data["file_name"] = bin2hex(random_bytes(4)) . "-" . bin2hex(random_bytes(2)) . "-" . bin2hex(random_bytes(2)) . "-" . bin2hex(random_bytes(4));
+                $file_data["file_name"] = $name;
                 $file_data["mime"] = $this->request->getPost('mime');
                 $file_data["type"] = $this->request->getPost('type');
                 $file_data["size"] = $this->request->getPost('size');
@@ -165,19 +172,15 @@ class Drive extends APIController
             }
 
 
+            $file_folder = new FileFolder($id);
+            $response = $file_folder->storage->addStream($stream, $file_data["file_name"]);
 
-            $filesystem->writeStream(
-                $file_data["file_name"],
-                $stream
-            );
             if (is_resource($stream)) {
                 fclose($stream);
             }
 
 
             $file_data = $drive_model->getFile($id, TRUE);
-
-
 
             $file_data[0]["local_id"] = $this->request->getPost("local_id");
 

@@ -75,6 +75,10 @@ function populateModalFormOptions(data) {
 
 
 
+
+
+
+
 $(function () {
     'use strict'
 
@@ -83,18 +87,35 @@ $(function () {
     //double click a folder in the table view
     $('body').on('dblclick', 'table.custom tbody tr, .grid-view .card', function (e) {
 
+        if (isTouchDevice()) return;
         var item = file_app.getItemFromFiles($(this).data("id"));
 
 
         if (item["type"] == "FOLDER") {
-
             updateParent(item.id);
-
-
         }
 
 
     });
+
+    $('body').on('click', 'table.custom tbody tr, .grid-view .card', function (e) {
+
+        if (!isTouchDevice()) return;
+
+        if(e.target.tagName == "INPUT") return;
+
+        var item = file_app.getItemFromFiles($(this).data("id"));
+
+
+        if (item["type"] == "FOLDER") {
+            updateParent(item.id);
+        }
+    });
+
+
+
+
+
 
     //click on a breadcrumb item
     $('body').on('click', '.breadcrumb-clickable', function (e) {
@@ -179,6 +200,7 @@ var populate_folders = function (data, status_text) {
 var refresh_table = function (data, status_text) {
 
     file_app.files = [];
+    file_app.selected = [];
 
     if (status_text) {
         //we show error

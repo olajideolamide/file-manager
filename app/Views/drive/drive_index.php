@@ -9,7 +9,7 @@
                     <span data-feather="menu"></span>
                 </button>
 
-                <input class="search form-control form-control-sm w-75 rounded border-secondary-subtle" type="text" placeholder="Search files and folders" aria-label="Search" v-model="search_term">
+                <input name="file_search" class="search form-control form-control-sm w-75 rounded border-secondary-subtle" type="text" placeholder="Search files and folders" aria-label="Search" v-model="search_term">
             </div>
 
 
@@ -182,7 +182,7 @@
                                                     <th class="text-center align-middle" scope="col" width="30" style="max-width: 30px">
 
                                                         <div>
-                                                            <input class="form-check-input check-all" type="checkbox" v-model="all_selected">
+                                                            <input name="file_checkbox_all" class="form-check-input check-all" type="checkbox" v-model="all_selected">
                                                         </div>
 
 
@@ -199,10 +199,10 @@
                                                 <tr v-for="(file, index) of files" :key="file.id" v-bind:data-id="file.id">
                                                     <td class="text-center align-middle">
                                                         <div>
-                                                            <input class="form-check-input" type="checkbox" v-model="selected" :value="file.id">
+                                                            <input name="file_checkbox" class="form-check-input" type="checkbox" v-model="selected" :value="file.id">
                                                         </div>
                                                     </td>
-                                                    <td class="d-flex ps-3">
+                                                    <td class="d-flex ps-3 clickable">
                                                         <div v-bind:data-file-id="file.id" v-on:click="populateInfoPane" class="d-flex align-items-center flex-grow-1">
                                                             <img v-if="file.file_type == 'photo'" v-bind:src="file.thumb_url" width="30" height="30" class="me-3" v-bind:data-file-id="file.id" />
                                                             <small-folder v-else-if="file.type == 'FOLDER'" v-bind:id="file.id" v-on:click="populateInfoPane"></small-folder>
@@ -253,14 +253,14 @@
                             <div class="row g-3 mt-1 grid-container">
                                 <div v-for="(file,index) of files" :key="file.id" v-bind:data-id="file.id" class="col-6 col-sm-4 col-md-3">
                                     <div class="card" v-bind:data-file-id="file.id" v-bind:data-id="file.id" style="box-shadow: 0px 8px 15px -3px rgba(0,0,0,0.1);">
-                                    <input class="form-check-input" type="checkbox" v-model="selected" :value="file.id">
-                                        <div class="img-container" style="height: 90%" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
+                                    <input name="file_checkbox" class="form-check-input" type="checkbox" v-model="selected" :value="file.id">
+                                        <div class="img-container clickable" style="height: 90%" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
 
                                             <img v-if="file.file_type == 'photo'" v-bind:src="file.thumb_url" style="width: auto; max-width: 100%; object-fit: cover;" class="card-img-top border-0" v-bind:data-file-id="file.id" v-on:click="populateInfoPane" />
                                             <large-folder v-else-if="file.type == 'FOLDER'" v-bind:id="file.id" v-on:click="populateInfoPane"></large-folder>
                                             <large-icon v-else v-bind:text="file.extension" v-bind:id="file.id" v-on:click="populateInfoPane"></large-icon>
                                         </div>
-                                        <div class="card-body" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
+                                        <div class="card-body clickable" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
                                             <div class="card-text d-flex justify-content-between">
                                                 <div class="text-truncate" style="max-width: 90%;" v-bind:data-file-id="file.id" v-on:click="populateInfoPane">
                                                     {{file.name}}
@@ -327,4 +327,4 @@
 
 
 <input id="file-input" class="d-none" type="file" name="name[]" multiple />
-<input id="folder-input" class="d-none" type="file" webkitdirectory mozdirectory />
+<input name="directory_upload" id="folder-input" class="d-none" type="file" webkitdirectory mozdirectory />

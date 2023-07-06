@@ -237,7 +237,7 @@ class CLIRequest extends Request
      * @param int|null          $filter A filter name to apply
      * @param mixed             $flags
      *
-     * @return array|null
+     * @return array|null|string
      */
     public function getPost($index = null, $filter = null, $flags = null)
     {

@@ -192,6 +192,7 @@ var file_app = new Vue({
         },
         parent: function () {
             refetchPath();
+
         },
         search_term: function () {
             refetchData();

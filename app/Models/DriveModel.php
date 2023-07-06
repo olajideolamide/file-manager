@@ -1,42 +1,39 @@
 <?php
-
+//TODOescapealldatainputswith$db-escape()forselects.inputswithquerybindingsareautoescaped
 namespace App\Models;
 
-use \Config\MimesIcons;
+
 use \Config\FileTypes;
 
 class DriveModel
 {
-    public $db;
-
+    private $db;
+    private $builder;
     public function __construct(&$db)
     {
         $this->db = $db;
+        $this->builder = $db->table('file');
     }
 
 
-    public function create($data)
+    public function create($data): int
     {
-        $builder = $this->db->table('file');
-        $builder->insert($data);
+        $this->builder->insert($data);
         return $this->db->insertID();
     }
 
     public function update($id, $data)
     {
-        $builder = $this->db->table('file');
-        $builder->set($data);
-        $builder->where('id', $id);
-        $builder->update();
+        $this->builder->set($data);
+        $this->builder->where('id', $id);
+        $this->builder->update();
         return;
     }
 
 
-    public function createFolder($data)
+    public function createFolder($data): int
     {
-        $builder = $this->db->table('file');
-        $builder->insert($data);
-
+        $this->builder->insert($data);
         return $this->db->insertID();
     }
 
@@ -140,7 +137,7 @@ class DriveModel
     public function getDrive($user_id, $options, $prepare = false)
     {
 
-        //sleep(10);
+
         $sort_options = array("name", "size", "updated_at");
         $sort_dir_options = array("ASC", "DESC");
         $query_filters = array();
@@ -191,15 +188,9 @@ class DriveModel
 
         $response = array();
         foreach ($data as $i => $row) {
-            $icon = MimesIcons::guessIconFromExtension((string) $row["extension"]);
-
-
-            if (empty($icon)) $icon = "file";
-            if ($row["type"] == "FOLDER") $icon = "folder";
 
             $response[$i]["id"] = $row["id"];
             $response[$i]["name"] = $row["name"];
-            $response[$i]["icon"] = "fa-" . $icon;
             if ($row["type"] == "FILE") $response[$i]["size"] = $row["size"];
             $response[$i]["type"] = $row["type"];
             $response[$i]["file_type"] = FileTypes::guessFileTypeFromExtension((string) $row["extension"]);
@@ -219,8 +210,6 @@ class DriveModel
             $response[$i]["created_at"] = date("jS M Y", strtotime($row["created_at"]));
             $response[$i]["hash"] = trim(base64_encode(str_pad($row["id"] . '|', 10, 'padding')), "=");
         }
-
-
 
         return $response;
     }

@@ -32,7 +32,7 @@ class APIController extends BaseController
 
     public function initController($request, $response, $logger)
     {
-        $this->db = \Config\Database::connect();
+        $this->db = db_connect();
 
         // Do Not Edit This Line
         parent::initController($request, $response, $logger);

@@ -8,10 +8,6 @@ class Drive extends AdminController
 {
     public function index($folder_hash = null)
     {
-        //$file_folder = new FileFolder(1);
-        //var_dump($file_folder->getEntry());
-        //die;
-
         $this->data["page_schema"]["title"] = "Files and folders";
 
         if (!empty($folder_hash)) {
@@ -19,8 +15,6 @@ class Drive extends AdminController
 
             if ($this->data["content"]["folder_id"] == 0) unset($this->data["content"]["folder_id"]);
         }
-
-        //var_dump($this->data["content"]["folder_id"]); die;
 
         $this->data["content"]["table_src_url"] = "/api/drive/file-entries";
         $view = "drive/drive_index";

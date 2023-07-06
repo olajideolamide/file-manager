@@ -12,8 +12,6 @@ use League\Flysystem\UnableToWriteFile;
 class Drive extends APIController
 {
 
-
-
     public function newFolder()
     {
 
@@ -42,8 +40,6 @@ class Drive extends APIController
         } else {
             $response_data["folder_name"] = count($folder_ids) . " items";
         }
-
-
 
         //next we fetch all the parent of the ids... We cannot move a folder/file into its parent. Thats redundant.
         $parent_ids = array();
