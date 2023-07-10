@@ -6,6 +6,7 @@ namespace App\Controllers\API;
 
 use App\Controllers\APIController;
 use App\Libraries\FileFolder;
+use CodeIgniter\Files\File;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
@@ -54,7 +55,6 @@ class Drive extends APIController
     }
 
 
-
     /**
      * move items to a destination
      */
@@ -80,8 +80,70 @@ class Drive extends APIController
     }
 
 
-    public function download(){
-        $ids = $this->request->getPost("ids");
+    public function download()
+    {
+
+        $rules = [
+            'ids' => 'required'
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->fail(singleError($this->validator->getErrors()), 400);
+        }
+
+        $ids = $this->request->getGet("ids");
+
+        $ids = explode(",", $ids);
+        $file_folder = new FileFolder($ids[0]);
+
+        if ($file_folder->getLastError()) {
+            return $this->fail("One of more ids supplied is not valid", 400);
+        }
+
+        if (count($ids) == 1 && $file_folder->getField("type") == "FILE") {
+            $stream = $file_folder->storage->readStream();
+
+            $file_contents = "";
+            if (is_resource($stream)) {
+                $file_contents = stream_get_contents($stream);
+                fclose($stream);
+            }
+
+            $this->response->setStatusCode(200);
+            return $this->response->download($file_folder->getField("name"), (string)$file_contents);
+        } else {
+            $zipArchive = new \ZipArchive();
+            $zip_name = "download-" . rand(100000, 999999) . ".zip";
+            $zipFile = WRITEPATH . "uploads/" . $zip_name;
+            if ($zipArchive->open($zipFile, \ZipArchive::CREATE) !== TRUE) {
+                return $this->fail("Unable to create zip file", 400);
+            }
+
+            helper("file");
+
+            foreach ($ids as $id) {
+                if (empty($id)) return $this->fail("File ids must be valid", 400);
+                $file_folder = new FileFolder($id);
+                if ($file_folder->getLastError()) {
+                    continue;
+                }
+                createZip($zipArchive, $file_folder, "");
+            }
+            $zipArchive->close();
+
+            $this->response->setHeader("Content-type", "application/zip");
+            $this->response->setHeader("Content-Transfer-Encoding", "binary");
+            $this->response->setHeader("Content-Disposition", "filename=$zip_name");
+
+            $this->response->setStatusCode(200);
+
+            ob_start();
+            readFile($zipFile);
+            $data = ob_get_clean();
+
+            unlink($zipFile);
+            return $this->response->setBody($data);
+        }
     }
 
 
@@ -93,7 +155,7 @@ class Drive extends APIController
         ];
 
         if (!$this->validate($rules)) {
-            return $this->fail($this->validator->listErrors(), 400);
+            return $this->fail(singleError($this->validator->getErrors()), 400);
         }
 
         $file_data = array();
@@ -103,10 +165,11 @@ class Drive extends APIController
         $file_data["updated_at"] = date("Y-m-d H:i:s");
         $file_data["user_id"] =  session()->get('id');
         if (!empty($this->request->getPost('parent'))) $file_data["parent_id"] =  $this->request->getPost('parent');
+        $file_data["storage_id"] = model('StorageModel', true, $this->db)->getDefaultStorage()["id"];
 
 
         $drive_model = model('DriveModel', true, $this->db);
-        $id = $drive_model->createFolder($file_data);
+        $id = $drive_model->create($file_data);
 
         $folder_data = $drive_model->getFile($id, TRUE);
 

@@ -6,10 +6,10 @@ let QUEUE_FOLDER_KEYS = {};
 
 
 
-$('#upload-files').on('click', function () {
+$('.upload-files').on('click', function () {
     $('#file-input').trigger('click');
 });
-$('#upload-folder').on('click', function () {
+$('.upload-folder').on('click', function () {
     $('#folder-input').trigger('click');
 });
 

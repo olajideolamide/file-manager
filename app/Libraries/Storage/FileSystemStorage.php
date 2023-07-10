@@ -39,6 +39,7 @@ class FileSystemStorage implements StorageInterface
         try {
             $adapter = new LocalFilesystemAdapter(WRITEPATH . "/storage");
             $filesystem = new Filesystem($adapter);
+
             $stream = $filesystem->readStream($this->file_folder->getField('file_name'));
         } catch (FilesystemException | UnableToReadFile $exception) {
             $this->error = "Unable to read file";

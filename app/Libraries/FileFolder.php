@@ -31,7 +31,7 @@ class FileFolder
     private $children;
 
     private $drive_model;
-    private $error;
+    private $error = null;
     private $storage_id;
     public $storage;
 
@@ -61,6 +61,7 @@ class FileFolder
      */
     public function initializeFields($entries): bool
     {
+
         if (count($entries) < 1) {
             $this->error = "Invalid file or folder";
             return false;
@@ -88,11 +89,16 @@ class FileFolder
     }
 
 
-    public function initializeStorage(): bool
+    private function initializeStorage(): bool
     {
         $db = db_connect();
         $storage_model = model('StorageModel', true, $db);
         $storage_data = $storage_model->find($this->storage_id);
+
+        if (empty($storage_data)) {
+            $this->error = "Could not find default storage";
+            return false;
+        }
 
 
         switch ($storage_data["type"]) {
@@ -127,7 +133,6 @@ class FileFolder
      */
     public function addStream($stream): bool
     {
-
         //TODO if versioning is enabled...
         return true;
     }
@@ -151,7 +156,7 @@ class FileFolder
 
     public function getChildren(): array
     {
-        return array();
+        return $this->drive_model->getChildren($this->id);
     }
 
     /**
@@ -185,7 +190,7 @@ class FileFolder
                     return false;
                 }
             }
-        }else{
+        } else {
             $destination_id = null;
         }
 
@@ -241,7 +246,6 @@ class FileFolder
     {
         $error = $this->error;
         $this->error = null;
-
         return $error;
     }
 }

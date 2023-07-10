@@ -171,6 +171,32 @@ var file_app = new Vue({
                 if (!this.current_info_item || !this.getItemFromFiles(this.current_info_item)) return {};
                 return this.getItemFromFiles(this.current_info_item);
             }
+        },
+        reversedBreadcrumb() {
+            var reversed_breadcrumb = this.breadcrumb.slice(0, -1).reverse();
+
+            if (this.breadcrumb.length > 0) {
+                reversed_breadcrumb.push({
+                    "id": "",
+                    "name": "All files"
+                });
+            }
+
+            return reversed_breadcrumb;
+        },
+        lastBreadcrumb() {
+            var last_breadcrumb = this.breadcrumb.slice(-1);
+            if (last_breadcrumb.length == 0) {
+                return {
+                    "id": "",
+                    "name": "All files"
+                };
+            } else {
+                return {
+                    "id": last_breadcrumb[0].id,
+                    "name": last_breadcrumb[0].name
+                };
+            }
         }
 
 

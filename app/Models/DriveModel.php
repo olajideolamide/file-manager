@@ -2,39 +2,36 @@
 //TODOescapealldatainputswith$db-escape()forselects.inputswithquerybindingsareautoescaped
 namespace App\Models;
 
-
+use CodeIgniter\Model;
 use \Config\FileTypes;
 
-class DriveModel
+class DriveModel extends Model
 {
-    private $db;
-    private $builder;
-    public function __construct(&$db)
-    {
-        $this->db = $db;
-        $this->builder = $db->table('file');
-    }
 
+
+    protected $table = 'file';
+    protected $primaryKey = 'id';
+    protected $useAutoIncrement = true;
+
+    protected $returnType = 'array';
 
     public function create($data): int
     {
-        $this->builder->insert($data);
-        return $this->db->insertID();
+        $this->builder()->insert($data);
+        return $this->insertID();
     }
 
-    public function update($id, $data)
+    public function update($id = null, $data = null): bool
     {
-        $this->builder->set($data);
-        $this->builder->where('id', $id);
-        $this->builder->update();
-        return;
+        $this->builder()->set($data);
+        $this->builder()->where('id', $id);
+        $this->builder()->update();
+        return true;
     }
 
-
-    public function createFolder($data): int
+    public function getChildren($id)
     {
-        $this->builder->insert($data);
-        return $this->db->insertID();
+        return $this->where('parent_id', $id)->findAll();
     }
 
     public function path($id): array
@@ -43,7 +40,7 @@ class DriveModel
         $parent_id = $id;
         while (true) {
             $sql = "SELECT id, name, parent_id FROM file WHERE file.id = ?";
-            $query = $this->db->query($sql, array($parent_id));
+            $query = $this->query($sql, array($parent_id));
             $file = $query->getRowArray();
 
             $path[] = $file;
@@ -61,7 +58,7 @@ class DriveModel
 
         $sql = "SELECT file.*, user.first_name, p_file.name as parent_name FROM file LEFT JOIN user ON file.user_id = user.id LEFT JOIN file as p_file ON p_file.id = file.parent_id WHERE file.id = ?";
 
-        $query = $this->db->query($sql, array($id));
+        $query = $this->query($sql, array($id));
 
         if ($prepare === true) return $this->prepareDriveData($query->getResult('array'));
         return $query->getResult('array');
@@ -86,7 +83,7 @@ class DriveModel
         }
 
 
-        $query = $this->db->query($sql, $options);
+        $query = $this->query($sql, $options);
         return $query->getRowArray();
     }
 
@@ -106,7 +103,7 @@ class DriveModel
         }
 
 
-        $query = $this->db->query($sql, $options);
+        $query = $this->query($sql, $options);
         return $query->getRowArray();
     }
 
@@ -127,7 +124,7 @@ class DriveModel
 
         $sql .= " ORDER BY file.updated_at DESC";
 
-        $query = $this->db->query($sql, array($query_filters));
+        $query = $this->query($sql, array($query_filters));
 
         if ($prepare === true) return $this->prepareDriveData($query->getResult('array'));
         return $query->getResult('array');
@@ -175,7 +172,7 @@ class DriveModel
 
 
 
-        $query = $this->db->query($sql, $query_filters);
+        $query = $this->query($sql, $query_filters);
 
 
         if ($prepare === true) return $this->prepareDriveData($query->getResult('array'));
@@ -241,7 +238,8 @@ class DriveModel
                 $file_data["updated_at"] = date("Y-m-d H:i:s");
                 $file_data["user_id"] =  $user_id;
                 if (!empty($parent)) $file_data["parent_id"] =  $parent;
-                $parent = $this->createFolder($file_data);
+                $file_data["storage_id"] = model('StorageModel', true)->getDefaultStorage()["id"];
+                $parent = $this->create($file_data);
             } else {
                 $parent = $current_folder["id"];
             }

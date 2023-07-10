@@ -7,12 +7,26 @@
         </div>
 
 
-        <ul class="nav flex-column mt-4 mb-2">
+        <div class="btn-toolbar mt-5">
+
+            <div class="dropdown mx-auto">
+                <button class="btn btn-primary  btn-sm dropdown-toggle fw-bold no-icon rounded" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width:150px">
+                    <i class="fa-solid fa-upload"></i> Upload
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="upload-files dropdown-item" href="#"><span data-feather="file" class="align-text-bottom"></span> Upload files</a></li>
+                    <li><a class="upload-files dropdown-item" href="#"><span data-feather="folder" class="align-text-bottom"></span> Upload Folder</a></li>
+                    <li><a onclick="SYSTEM.showModal('', '/api/modal/drive/new-folder');" class="dropdown-item create-folder-btn" href="#"><span data-feather="folder-plus" class="align-text-bottom "></span> Create Folder</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+
+        <ul class="nav flex-column mt-4 mb-2 border-top pt-4">
             <li class="nav-item mb-2">
                 <a class="nav-link link-primary" href="#">
                     <div class="d-inline-block" style="width:25px; height: 15px"><i class="fa-solid fa-database me-2 "></i></div>
-
-
                     All files
                 </a>
             </li>
@@ -37,13 +51,7 @@
                     Shared with me
                 </a>
             </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link" href="#">
-                    <div class="d-inline-block" style="width:25px; height: 15px"> <i class="fa-solid fa-tags me-2"></i></div>
 
-                    Tags
-                </a>
-            </li>
             <li class="nav-item mb-2">
                 <a class="nav-link" href="#">
                     <div class="d-inline-block" style="width:25px; height: 15px"> <i class="fa-solid fa-trash me-2"></i></div>

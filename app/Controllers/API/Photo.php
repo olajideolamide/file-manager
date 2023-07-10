@@ -17,23 +17,31 @@ class Photo extends APIController
     public function thumb($file_id)
     {
 
-        //first make sure that this file is a photo type
-        $drive_model = new \App\Models\DriveModel($this->db);
-        $file = $drive_model->getFile($file_id);
+        //TODO first make sure that this file is a photo type
+        //$drive_model = new \App\Models\DriveModel($this->db);
+        //$file = $drive_model->getFile($file_id);
 
-        if (empty($file)) {
-            return $this->failNotFound("The photo specified does not exist");
-        }
+        //if (empty($file)) {
+            //return $this->failNotFound("The photo specified does not exist");
+        //}
 
 
         $width = 300;
         $height = 300;
 
         $file_folder = new FileFolder($file_id);
+        if ($file_folder->getLastError()) {
+            return $this->failNotFound("The file specified does not exist");
+        }
+
+
         $stream = $file_folder->storage->readStream();
 
-        $file_contents = stream_get_contents($stream);
-        fclose($stream);
+        $file_contents = "";
+        if (is_resource($stream)) {
+            $file_contents = stream_get_contents($stream);
+            fclose($stream);
+        }
 
 
         $manager = new ImageManager(['driver' => 'gd']);
@@ -54,14 +62,14 @@ class Photo extends APIController
         rewind($stream);
 
         //$filesystem->writeStream(
-            //$file[0]["file_name"] . "_thumb",
-            //$stream
+        //$file[0]["file_name"] . "_thumb",
+        //$stream
         //);
         if (is_resource($stream)) {
             fclose($stream);
         }
 
-        $this->response->setHeader("Content-type: ", "image/jpeg");
+        $this->response->setHeader("Content-type ", "image/jpeg");
         $this->response->setStatusCode(200);
         return $this->response->setBody((string)$resized);
     }

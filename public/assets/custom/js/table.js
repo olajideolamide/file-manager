@@ -19,8 +19,6 @@ var PUSH_STATE = true;
 
 //initialize the table and load the default view
 $(function () {
-    //SYSTEM.showModal('', '/api/modal/drive/move/67');
-
     if (typeof folder_id !== 'undefined' && folder_id !== null) file_app.parent = folder_id;
     refetchData();
 })
@@ -102,7 +100,7 @@ $(function () {
 
         if (!isTouchDevice()) return;
 
-        if(e.target.tagName == "INPUT") return;
+        if (e.target.tagName == "INPUT") return;
 
         var item = file_app.getItemFromFiles($(this).data("id"));
 
@@ -131,6 +129,18 @@ $(function () {
         //grab all selected
         if (file_app.selected.length < 1) return;
         SYSTEM.showModal('', '/api/modal/drive/move/' + file_app.selected.join(","));
+    });
+
+    $('body').on('click', '.bulk-option.download', function (e) {
+        //grab all selected
+        if (file_app.selected.length < 1) return;
+        //var data = {
+        //"ids": file_app.selected.join(",")
+        //}
+
+        window.location.replace('/api/drive/download?ids=' + file_app.selected.join(","));
+        //request('/api/drive/download/', data, "get", "");
+
     });
 
 
@@ -188,7 +198,7 @@ var populate_folders = function (data, status_text) {
         this_parent = file_app.parent;
         if (!this_parent) this_parent = null;
 
-        if (item["parent_id"] == this_parent && !file_app.getItemFromFiles(item["id"])) {
+        if (item["parent_id"] == this_parent && !file_app.getItemFromFiles(item["id"]) && file_app.search_term == "") {
             insertFileFolder(0, item, true);
         }
 
@@ -250,7 +260,7 @@ var handle_path = function (data, status_text) {
 function insertFileFolder(key, item, prepend = false) {
     let this_parent = file_app.parent;
     if (!this_parent) this_parent = null;
-    if (item["parent_id"] != this_parent) return;
+    if (item["parent_id"] != this_parent && file_app.search_term == "") return;
 
     //first delete this id if it exists
     file_app.removeItemFromFiles(item.id);
